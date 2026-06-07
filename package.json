@@ -1,0 +1,39 @@
+{
+  "name": "harmony-lab-pro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "App web musical interactiva para composición asistida, exploración armónica y secuenciación rítmica",
+  "author": "Brian Eduardo Anaya Ruiz",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "start": "node server.js",
+    "lint": "eslint src --ext .js,.jsx"
+  },
+  "dependencies": {
+    "framer-motion": "^11.3.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^2.0.4",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "jsdom": "^24.1.1",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7",
+    "vite": "^5.3.5"
+  },
+  "type": "module"
+}
