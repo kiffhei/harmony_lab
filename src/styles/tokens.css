@@ -1,100 +1,359 @@
 /**
- * tokens.css — Harmony Lab Pro
- * PLACEHOLDER — reemplazar con el handoff del agente diseñador.
- * Estos valores permiten que el build funcione mientras llega DESIGNER.md completo.
+ * tokens.css — Harmony Lab Pro · Sesión 1 Design Handoff
+ * Estética: Novation × Teenage Engineering — instrumento real, no SaaS.
+ * Todos los valores son implementables directamente en Tailwind v3
+ * referenciando var(--token) en tailwind.config.js o como valores arbitrarios.
  */
 
 :root {
-  /* ── Colores base ─────────────────────────────────────────────────────── */
-  --c-bg:       #080c1a;
-  --c-surface:  #0f1424;
-  --c-elevated: #161c30;
-  --c-amber:    #f59e0b;
-  --c-violet:   #8b5cf6;
-  --c-green:    #10b981;
-  --c-red:      #ef4444;
-  --c-text:     #e8eaf0;
-  --c-muted:    #6b7280;
-  --c-dim:      #374151;
 
-  /* ── Tipografía — placeholder hasta handoff ───────────────────────────── */
-  --font-display: 'Inter', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
-  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+  /* ═══════════════════════════════════════════════════════════════════════
+     COLORES BASE — fondo profundo, superficies estratificadas
+     Inspirado en la pantalla apagada de un Teenage Engineering OP-1
+     ═══════════════════════════════════════════════════════════════════════ */
 
-  /* ── Escalas de tipo ───────────────────────────────────────────────────── */
-  --text-xs:   0.625rem;  /* 10px */
-  --text-sm:   0.75rem;   /* 12px */
-  --text-base: 0.875rem;  /* 14px */
-  --text-md:   1rem;      /* 16px */
-  --text-lg:   1.25rem;   /* 20px */
-  --text-xl:   1.5rem;    /* 24px */
-  --text-2xl:  2rem;      /* 32px */
-  --text-3xl:  2.5rem;    /* 40px */
+  --c-bg:          #080c1a;   /* Fondo principal — negro azulado profundo */
+  --c-surface:     #0f1424;   /* Topbar, sidebar, paneles primarios */
+  --c-elevated:    #161c30;   /* Cards, inputs, contenedores de módulo */
+  --c-elevated-2:  #1e263e;   /* Hover de card, grupos activos */
+  --c-border:      #2a3350;   /* Bordes por defecto */
+  --c-border-subtle: #1c2238; /* Separadores internos, grids */
 
-  /* ── Espaciado (escala 4px) ─────────────────────────────────────────── */
-  --sp-1:  4px;
-  --sp-2:  8px;
-  --sp-3:  12px;
-  --sp-4:  16px;
-  --sp-5:  20px;
-  --sp-6:  24px;
-  --sp-8:  32px;
-  --sp-10: 40px;
-  --sp-12: 48px;
-  --sp-16: 64px;
 
-  /* ── Border radius ──────────────────────────────────────────────────── */
-  --radius-sm:   4px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-xl:   16px;
-  --radius-full: 9999px;
+  /* ═══════════════════════════════════════════════════════════════════════
+     ACENTOS PRIMARIOS — identidad de marca
+     ═══════════════════════════════════════════════════════════════════════ */
 
-  /* ── Sombras ────────────────────────────────────────────────────────── */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,.4);
-  --shadow-md:  0 4px 12px rgba(0,0,0,.5);
-  --shadow-lg:  0 8px 24px rgba(0,0,0,.6);
-  --glow-amber: 0 0 12px rgba(245,158,11,.4);
-  --glow-violet:0 0 12px rgba(139,92,246,.4);
-  --glow-green: 0 0 12px rgba(16,185,129,.4);
+  /* Amber — acento principal, nota raíz, CTA */
+  --c-amber:        #f59e0b;
+  --c-amber-bright: #fbbf24;
+  --c-amber-dim:    #b87408;
+  --c-amber-glow:   rgba(245, 158, 11, 0.18);
+  --c-amber-glow-strong: rgba(245, 158, 11, 0.35);
 
-  /* ── Animaciones ────────────────────────────────────────────────────── */
-  --dur-fast:   120ms;
-  --dur-normal: 250ms;
-  --dur-slow:   450ms;
-  --dur-beat:   500ms;  /* se actualiza dinámicamente con el BPM */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Violet — acento secundario, bordes activos, armonías secundarias */
+  --c-violet:        #8b5cf6;
+  --c-violet-bright: #a78bfa;
+  --c-violet-dim:    #5b33c2;
+  --c-violet-glow:   rgba(139, 92, 246, 0.18);
 
-  /* ── Z-index scale ──────────────────────────────────────────────────── */
-  --z-bg:      0;
-  --z-content: 10;
-  --z-overlay: 20;
-  --z-modal:   30;
-  --z-toast:   40;
+  /* Green — estado positivo, afinado, resolución armónica */
+  --c-green:        #10b981;
+  --c-green-bright: #34d399;
+  --c-green-glow:   rgba(16, 185, 129, 0.18);
 
-  /* ── Tonalidades — 12 notas (placeholder) ──────────────────────────── */
-  /* El diseñador define los colores finales mapeados al círculo de quintas */
-  --key-C:   #e74c3c;
-  --key-Cs:  #e67e22;
-  --key-D:   #f1c40f;
-  --key-Ds:  #2ecc71;
-  --key-E:   #1abc9c;
-  --key-F:   #3498db;
-  --key-Fs:  #2980b9;
-  --key-G:   #9b59b6;
-  --key-Gs:  #8e44ad;
-  --key-A:   #e91e8c;
-  --key-As:  #c0392b;
-  --key-B:   #d35400;
+  /* Red — tensión, error, eliminar */
+  --c-red:        #ef4444;
+  --c-red-bright: #f87171;
+  --c-red-glow:   rgba(239, 68, 68, 0.18);
 
-  /* Tecla activa — se actualiza desde JS al cambiar rootNote */
-  --active-key-color: var(--key-C);
 
-  /* ── Layout ─────────────────────────────────────────────────────────── */
-  --sidebar-w: 64px;
-  --panel-w:   260px;
-  --nav-h:     56px;
+  /* ═══════════════════════════════════════════════════════════════════════
+     PALETA EXPRESIONISTA — alta energía (de la referencia visual)
+     Naranja quemado + amarillo saturado + rojo vibrante del expressionismo.
+     Usar en: splash, beats activos del sequencer, estados de performance.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --c-burn-orange: #d44d0a;   /* Naranja quemado — beat downbeat activo */
+  --c-signal-yellow: #e8c020; /* Amarillo saturado — alerta, paso beat-4 */
+  --c-hot-coral:  #e8503a;    /* Coral vibrante — tensión dramática */
+  --c-electric-cyan: #00cce0; /* Cian eléctrico — indicadores de precisión */
+  --c-deep-indigo: #2a20a8;   /* Índigo profundo — calma, resolución */
+  --c-forest:     #148050;    /* Verde bosque — resolución armónica */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     TEXTO
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --c-text:           #e8eaf0;  /* Principal — alto contraste */
+  --c-text-secondary: #9ca3b8;  /* Secundario — labels, meta-info */
+  --c-muted:          #6b7280;  /* Desactivado, placeholders */
+  --c-dim:            #374151;  /* Elementos inactivos, grids */
+  --c-inverse:        #080c1a;  /* Texto sobre fondos claros */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     PALETA DE TONALIDADES — 12 notas del círculo de quintas
+     Lógica: el círculo de quintas se mapea al espectro visible completo.
+     C (tónica) = ámbar cálido. Avanzando en quintas (sostenidos)
+     la paleta se enfría hacia el azul-cian. Girando en el sentido
+     contrario (bemoles) la paleta cae hacia el rojo.
+     Los 12 colores están separados 30° en el círculo cromático
+     para máxima distinguibilidad sobre el fondo #080c1a.
+
+     Orden del círculo de quintas: C G D A E B F# C# G# D# A# F
+     Cada uno 30° de separación cromática: comienza en 30° (ámbar) y
+     avanza en sentido horario por el espectro completo.
+
+     Se usan como gradientes radiales de fondo (opacity ≤ 0.15).
+     --active-key-color se actualiza desde JS al cambiar rootNote.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --c-tone-C:   hsl(30,  92%, 60%);  /* Ámbar dorado     — tónica "home" */
+  --c-tone-G:   hsl(60,  88%, 55%);  /* Amarillo eléctrico — quinta arriba */
+  --c-tone-D:   hsl(90,  82%, 52%);  /* Lima vibrante    — segunda mayor */
+  --c-tone-A:   hsl(120, 68%, 50%);  /* Verde esmeralda  — sexta mayor */
+  --c-tone-E:   hsl(150, 72%, 50%);  /* Menta teal       — tercera mayor */
+  --c-tone-B:   hsl(180, 80%, 52%);  /* Cian eléctrico   — séptima mayor */
+  --c-tone-Fs:  hsl(210, 80%, 60%);  /* Azul cielo       — tritono (tensión máx) */
+  --c-tone-Cs:  hsl(240, 72%, 65%);  /* Azul perinola    — bemol séptima */
+  --c-tone-Gs:  hsl(270, 74%, 62%);  /* Violeta suave    — bemol cuarta */
+  --c-tone-Ds:  hsl(300, 76%, 58%);  /* Magenta          — bemol segunda */
+  --c-tone-As:  hsl(330, 84%, 60%);  /* Rosa caliente    — bemol sexta */
+  --c-tone-F:   hsl(0,   82%, 60%);  /* Rojo coral       — subdominante */
+
+  /* Token dinámico — actualizado por JS: document.documentElement.style.setProperty('--active-key-color', ...) */
+  --active-key-color: var(--c-tone-C);
+  --active-key-glow:  rgba(245, 158, 11, 0.15);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     TIPOGRAFÍA
+     Familias definidas en fonts.css. Ver justificación allí.
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --font-display:    'Syne', system-ui, sans-serif;
+  --font-body:       'Barlow', system-ui, sans-serif;
+  --font-condensed:  'Barlow Condensed', system-ui, sans-serif;
+  --font-mono:       'Space Mono', 'Courier New', monospace;
+
+  /* Escala tipográfica — nombres evocadores para músicos */
+  --text-2xs:   10px;   /* Piano key label, contador de paso */
+  --text-xs:    11px;   /* Tags, badges */
+  --text-sm:    13px;   /* Captions, labels secundarios */
+  --text-base:  15px;   /* Body por defecto */
+  --text-md:    17px;   /* Body grande, nav labels */
+  --text-lg:    20px;   /* Títulos de sección */
+  --text-xl:    24px;   /* Headers de módulo */
+  --text-2xl:   32px;   /* Display pequeño */
+  --text-3xl:   42px;   /* Display medio — nombre de acorde grande */
+  --text-4xl:   56px;   /* Display grande — nota en tuner */
+  --text-5xl:   72px;   /* Splash hero */
+
+  /* Pesos */
+  --fw-light:     300;
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+
+  /* Interlineados */
+  --lh-tight:   1.1;   /* Títulos display, Syne heavy */
+  --lh-snug:    1.3;   /* Subtítulos */
+  --lh-normal:  1.5;   /* Body Barlow */
+  --lh-relaxed: 1.7;   /* Texto largo */
+  --lh-mono:    1.4;   /* Space Mono datos */
+
+  /* Espaciado de letras */
+  --ls-tight:  -0.03em;  /* Syne bold — títulos grandes */
+  --ls-normal:  0em;
+  --ls-wide:    0.06em;  /* Barlow labels en mayúsculas */
+  --ls-wider:   0.12em;  /* Space Mono — BPM, Hz */
+  --ls-widest:  0.20em;  /* Etiquetas de tecla en Condensed */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ESPACIADO — escala 4px (Tailwind-compatible)
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --s-0:   0px;
+  --s-1:   4px;
+  --s-2:   8px;
+  --s-3:   12px;
+  --s-4:   16px;
+  --s-5:   20px;
+  --s-6:   24px;
+  --s-7:   28px;
+  --s-8:   32px;
+  --s-10:  40px;
+  --s-12:  48px;
+  --s-14:  56px;
+  --s-16:  64px;
+  --s-20:  80px;
+  --s-24:  96px;
+  --s-32:  128px;
+  --s-40:  160px;
+  --s-48:  192px;
+  --s-64:  256px;
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     BORDER RADIUS — por contexto
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --r-none:      0px;
+  --r-xs:        2px;     /* Pasos del sequencer, pixel-precise */
+  --r-sm:        4px;     /* Botones, inputs, step cells */
+  --r-md:        8px;     /* Cards, paneles */
+  --r-lg:        12px;    /* Contenedores de módulo */
+  --r-xl:        16px;    /* Modales, tarjetas grandes */
+  --r-2xl:       24px;    /* Secciones de feature */
+  --r-full:      9999px;  /* Pills, badges, thumbs de range */
+  --r-squircle:  28%;     /* Forma de app icon */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     SOMBRAS Y GLOWS
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  /* Sombras base */
+  --shadow-xs:    0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-sm:    0 1px 4px rgba(0, 0, 0, 0.5);
+  --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.55);
+  --shadow-lg:    0 8px 28px rgba(0, 0, 0, 0.6);
+  --shadow-xl:    0 16px 56px rgba(0, 0, 0, 0.65);
+  --shadow-inset: inset 0 2px 8px rgba(0, 0, 0, 0.65);
+
+  /* Glows — estados activos, pressed, in-tune */
+  --glow-amber:  0 0 8px rgba(245, 158, 11, 0.45), 0 0 20px rgba(245, 158, 11, 0.18);
+  --glow-violet: 0 0 8px rgba(139, 92, 246, 0.45), 0 0 20px rgba(139, 92, 246, 0.18);
+  --glow-green:  0 0 8px rgba(16, 185, 129, 0.5),  0 0 20px rgba(16, 185, 129, 0.18);
+  --glow-red:    0 0 8px rgba(239, 68, 68, 0.5),   0 0 20px rgba(239, 68, 68, 0.18);
+  --glow-cyan:   0 0 8px rgba(0, 204, 224, 0.5),   0 0 20px rgba(0, 204, 224, 0.18);
+
+  /* Piano keys — sombras específicas para reproducir lacado y marfil */
+  --shadow-key-white: 0 4px 8px rgba(0, 0, 0, 0.75), inset 0 -2px 3px rgba(0, 0, 0, 0.25);
+  --shadow-key-black: 0 6px 14px rgba(0, 0, 0, 0.9), inset 0 -1px 2px rgba(255, 255, 255, 0.04);
+  --shadow-key-press: 0 1px 3px rgba(0, 0, 0, 0.9), inset 0 3px 7px rgba(0, 0, 0, 0.55);
+
+  /* Chord node — efecto LED encendido */
+  --shadow-chord-active: 0 0 0 2px var(--c-amber), var(--glow-amber);
+  --shadow-chord-hover:  0 0 0 1px var(--c-amber-dim);
+
+  /* Sequencer step glow — color por instrumento, asignado via clase */
+  --glow-kick:   0 0 6px rgba(212, 77, 10, 0.65),  0 0 14px rgba(212, 77, 10, 0.25);
+  --glow-snare:  0 0 6px rgba(245, 158, 11, 0.65), 0 0 14px rgba(245, 158, 11, 0.25);
+  --glow-hh:     0 0 6px rgba(232, 192, 32, 0.65), 0 0 14px rgba(232, 192, 32, 0.25);
+  --glow-clap:   0 0 6px rgba(139, 92, 246, 0.65), 0 0 14px rgba(139, 92, 246, 0.25);
+  --glow-tom:    0 0 6px rgba(16, 185, 129, 0.65), 0 0 14px rgba(16, 185, 129, 0.25);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ANIMACIONES
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  /* Duraciones */
+  --dur-instant:  80ms;    /* Retroalimentación inmediata — piano key tap */
+  --dur-fast:     150ms;   /* Micro-interacciones — button press */
+  --dur-normal:   250ms;   /* Transiciones por defecto */
+  --dur-slow:     400ms;   /* Transiciones de módulo */
+  --dur-slower:   600ms;   /* Cambio de tonalidad (TonalityGradient) */
+  --dur-ambient:  900ms;   /* Animaciones atmosféricas */
+  --dur-beat:     500ms;   /* Se reemplaza desde JS: 60000 / bpm + 'ms' */
+
+  /* Easings */
+  --ease-out:     cubic-bezier(0.0, 0.0, 0.2, 1);    /* Entrada — materiales */
+  --ease-in:      cubic-bezier(0.4, 0.0, 1.0, 1.0);  /* Salida */
+  --ease-sharp:   cubic-bezier(0.4, 0.0, 0.6, 1.0);  /* Corte brusco */
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1); /* Resorte con overshoot */
+  --ease-snappy:  cubic-bezier(0.23, 1.0, 0.32, 1);  /* Rápido y asentado */
+  --ease-natural: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Suave, orgánico */
+
+  /*
+   * Framer Motion — referencia para el programador (no CSS):
+   * ChordNode spring:    { type:"spring", stiffness:400, damping:25 }
+   * Button active:       { type:"spring", stiffness:600, damping:35 }
+   * Module slide:        { type:"tween", duration:0.35, ease:[0,0,0.2,1] }
+   * Tab indicator:       { type:"spring", stiffness:500, damping:35 }
+   * Pattern card hover:  { type:"tween", duration:0.2, ease:[0.23,1,0.32,1] }
+   */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     Z-INDEX SCALE
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --z-bg:       -1;   /* Backgrounds animados — pointer-events: none */
+  --z-base:      0;
+  --z-raised:    10;  /* Cards elevadas, paneles */
+  --z-overlay:   20;  /* Dropdowns, popovers */
+  --z-sticky:    30;  /* Nav, sidebar */
+  --z-modal:     40;  /* Diálogos, modales */
+  --z-toast:     50;  /* Notificaciones */
+  --z-tooltip:   60;  /* Tooltips */
+  --z-top:      100;  /* Capa de emergencia */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     COMPONENTES ESPECÍFICOS — Piano
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --piano-white-w-desktop: 28px;
+  --piano-white-w-tablet:  32px;
+  --piano-white-w-mobile:  36px;
+  --piano-white-h:         120px;
+  --piano-black-w-ratio:   0.62;   /* relativo al ancho de tecla blanca */
+  --piano-black-h-ratio:   0.60;
+
+  --piano-white-color:    #f0ece0;  /* Marfil envejecido */
+  --piano-black-color:    #0a0a0e;  /* Lacado negro brillante */
+  --piano-white-border:   #c8c0ac;  /* Separador entre teclas blancas */
+  --piano-scale-tint:     rgba(245, 158, 11, 0.22); /* Notas en escala activa */
+  --piano-active-glow:    var(--glow-amber);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     COMPONENTES ESPECÍFICOS — Sequencer / Drum Machine
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --seq-step-h-desktop: 28px;
+  --seq-step-h-tablet:  32px;
+  --seq-step-h-mobile:  34px;
+  --seq-gap:            2px;       /* Gap entre pasos */
+
+  --seq-step-off:       var(--c-elevated);
+  --seq-step-border:    var(--c-border-subtle);
+  --seq-beat-4-tint:    rgba(245, 158, 11, 0.08); /* Cada 4 pasos — downbeat */
+  --seq-playhead-color: var(--c-amber);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     COMPONENTES ESPECÍFICOS — Chord Nodes (HarmonyMap)
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --chord-node-size:    56px;   /* Desktop */
+  --chord-node-sm:      44px;   /* Mobile / condensado */
+  --chord-node-border:  var(--c-border);
+  --chord-node-active:  var(--c-amber);
+  --chord-edge-opacity: 0.35;   /* Opacidad de las líneas de relación */
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     COMPONENTES ESPECÍFICOS — Tuner
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --tuner-in-tune-cents:   5;    /* ±5 cents = en tono */
+  --tuner-warning-cents:   15;   /* ±15 cents = zona de aviso */
+  --tuner-needle-color:    var(--c-text);
+  --tuner-intune-color:    var(--c-green);
+  --tuner-flat-color:      var(--c-electric-cyan);
+  --tuner-sharp-color:     var(--c-hot-coral);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     LAYOUT — estructuras de la app
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --sidebar-w:    64px;
+  --panel-w:      260px;
+  --bottom-nav-h: 64px;
+  --topbar-h:     52px;
+
+  /* iOS safe areas */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     BACKGROUNDS ANIMADOS — opacidad máxima sobre contenido
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  --bg-max-opacity:   0.15;   /* Regla absoluta: ningún bg supera esto */
+  --bg-default-opacity: 0.08; /* Opacidad en reposo */
+  --bg-active-opacity:  0.12; /* Opacidad cuando isPlaying = true */
+
 }

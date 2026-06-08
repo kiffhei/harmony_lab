@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!--
+    Harmony Lab Pro — Logo / Favicon
+    Concepto: H·WAVE
+
+    Las dos barras verticales forman la letra H (de Harmony / H·Lab).
+    El travesaño horizontal es reemplazado por un ciclo completo de
+    onda sinusoidal — la forma más elemental del sonido.
+    El resultado es un símbolo que dice simultáneamente:
+      → H (identidad de marca)
+      → onda (audio, música)
+      → precisión (geometría exacta, no clipart)
+      → laboratorio (construcción sistemática)
+
+    Funciona a 32px (favicon), 64px (nav icon) y 400px (splash).
+    El gradiente ámbar→violeta refleja los tokens --c-amber / --c-violet.
+    El borde anular sutil da legibilidad sobre fondos claros y oscuros.
+  -->
+  <defs>
+    <linearGradient id="g-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="g-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#0f1424"/>
+      <stop offset="100%" stop-color="#080c1a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fondo: rounded square con gradiente de superficie -->
+  <rect width="32" height="32" rx="7" fill="url(#g-bg)"/>
+
+  <!-- Borde sutil — legibilidad en contextos claros -->
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="6.25"
+        fill="none" stroke="#f59e0b" stroke-width="0.75" stroke-opacity="0.30"/>
+
+  <!-- Pilar izquierdo de la H -->
+  <rect x="5" y="7" width="5" height="18" rx="1.5" fill="url(#g-primary)"/>
+
+  <!-- Pilar derecho de la H -->
+  <rect x="22" y="7" width="5" height="18" rx="1.5" fill="url(#g-primary)"/>
+
+  <!--
+    Travesaño sinusoidal — un ciclo completo de x=10 a x=22 en y=16
+    Primera mitad: arco hacia arriba (pico ~y=8.5)
+    Segunda mitad: arco hacia abajo (valle ~y=23.5)
+    Bezier cúbico: M10 16 C12 8.5 14 8.5 16 16 C18 23.5 20 23.5 22 16
+  -->
+  <path d="M10 16 C12 8.5 14 8.5 16 16 C18 23.5 20 23.5 22 16"
+        fill="none"
+        stroke="url(#g-primary)"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

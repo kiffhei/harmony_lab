@@ -1,8 +1,39 @@
 /**
- * fonts.css — Harmony Lab Pro
- * PLACEHOLDER — reemplazar con el import de Google Fonts que entregue el diseñador.
- * Las fuentes actuales son temporales para que el build no falle.
+ * fonts.css — Harmony Lab Pro · Sesión 1 Design Handoff
+ *
+ * TIPOGRAFÍA SELECCIONADA: tres fuentes con personalidad propia.
+ * Criterio unificador: cada una evoca hardware musical específico.
  */
 
-/* Temporal hasta handoff del diseñador */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/**
+ * 1. SYNE — Display / Headlines (400–800)
+ *    Diseñada por Bonjour Monde con un carácter performativo:
+ *    las mayúsculas en peso 800 tienen la presencia de una serigrafía
+ *    en hardware Teenage Engineering. Geométrica pero con irregularidades
+ *    intencionales — no es un typeface de SaaS, tiene actitud propia.
+ *    Uso: títulos de módulos, nombres de acordes grandes, splash hero,
+ *    nombres de notas en el Key Explorer, BPM en display grande.
+ */
+
+/**
+ * 2. BARLOW — Body / Labels / UI (300–700) + Barlow Condensed (400–700)
+ *    Inspirada en letras de carteles de autopista y señalética industrial.
+ *    Tiene el carácter técnico de un manual de equipos Novation: directa,
+ *    legible a 10px sobre fondos oscuros, sin rebabas. Barlow Condensed
+ *    es indispensable para etiquetas del teclado piano, pasos del
+ *    sequencer y nombres de trastes donde el espacio es crítico.
+ *    Uso: body text, navegación, labels de instrumento, badges, inputs.
+ */
+
+/**
+ * 3. SPACE MONO — Monospace / Datos técnicos (400–700)
+ *    Diseñada por Colophon Foundry con referencias en impresoras
+ *    retrofuturistas y terminales. Las frecuencias en Hz, el valor BPM,
+ *    cents de desviación y datos MIDI se leen como si vinieran de la
+ *    pantalla LCD de un rack Korg vintage. Su spacing generoso evita
+ *    confusión entre 0/O y 1/l en lectura rápida en tiempo real.
+ *    Uso: frecuencia Hz, BPM numeral, cents tuner, valores MIDI,
+ *    contadores de pasos, notas detectadas.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');

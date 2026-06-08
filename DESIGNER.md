@@ -310,34 +310,120 @@ SESIÓN 5 — HANDOFF
 
 ## Sección de decisiones tomadas
 
-*Esta sección se completa durante el proceso de diseño.*
+*Sesión 1 completada — 2026-06-08*
 
-### Logo seleccionado
-<!-- Completar después de la sesión 1 -->
+---
+
+### Logo seleccionado — **H·WAVE**
+
+**Concepto**: Las dos barras verticales forman la letra H (de Harmony Lab).
+El travesaño horizontal es reemplazado por un ciclo completo de onda
+sinusoidal — la forma más elemental del sonido.
+
+El símbolo dice simultáneamente:
+- **H** — identidad de marca (Harmony Lab / H·Lab)
+- **Onda** — audio, música, vibración
+- **Precisión** — geometría exacta, no clipart ni literal
+- **Laboratorio** — construcción sistemática, medición
+
+Archivos generados: `public/favicon.svg`
+Gradiente: `--c-amber` (#f59e0b) → `--c-violet` (#8b5cf6), diagonal 135°
+Fondo: rounded square rx=7, gradiente `--c-surface` → `--c-bg`
+Borde: amber 30% opacidad para legibilidad en contextos claros
+
+Pendiente Sesión 2: variantes dark/light/icon/display (400px splash).
+
+---
 
 ### Tipografía seleccionada
-<!-- Completar después de la sesión 1 -->
-- Display:
-- Body:
-- Monospace:
+
+**Display / Headlines** — [Syne](https://fonts.google.com/specimen/Syne) (pesos 400–800)
+Diseñada por Bonjour Monde con carácter performativo. Las mayúsculas en
+peso 800 tienen la presencia de una serigrafía en hardware Teenage Engineering.
+Geométrica pero con irregularidades intencionales — no es un typeface de SaaS.
+Uso: títulos de módulo, nombres de acordes grandes, splash hero, BPM en display,
+nota detectada en el Tuner.
+
+**Body / Labels / UI** — [Barlow](https://fonts.google.com/specimen/Barlow) (pesos 300–700)
++ [Barlow Condensed](https://fonts.google.com/specimen/Barlow+Condensed) (400–700)
+Inspirada en letras de carteles y señalética industrial. Carácter técnico de
+manual de equipos Novation: directa, legible a 10px sobre fondos oscuros.
+Barlow Condensed es clave para etiquetas del piano, pasos del sequencer y
+nombres de trastes donde el espacio es crítico.
+Uso: body, navegación, labels de instrumento, badges, inputs.
+
+**Monospace / Datos técnicos** — [Space Mono](https://fonts.google.com/specimen/Space+Mono) (400, 700)
+Diseñada por Colophon Foundry con referencias en impresoras retrofuturistas.
+Las frecuencias en Hz, BPM y cents se leen como si vinieran de la pantalla
+LCD de un rack Korg vintage. Spacing generoso evita confusión 0/O y 1/l.
+Uso: frecuencia Hz, BPM numeral, cents del tuner, valores MIDI, contadores.
+
+Escala tipográfica completa: ver `src/styles/tokens.css` (--text-2xs … --text-5xl)
+
+---
 
 ### Paleta expandida
-<!-- Completar después de la sesión 1 -->
+
+**Base** (sin cambios desde el sistema previo):
+```
+--c-bg:        #080c1a   Fondo principal
+--c-surface:   #0f1424   Topbar, sidebar
+--c-elevated:  #161c30   Cards, inputs
+--c-elevated-2:#1e263e   Hover de card
+--c-border:    #2a3350   Bordes por defecto
+```
+
+**Acentos** (ajustes en variantes bright/dim/glow):
+```
+--c-amber:        #f59e0b   Acento primario — sin cambios
+--c-amber-bright: #fbbf24   Hover state
+--c-amber-dim:    #b87408   Disabled/sutil
+--c-violet:       #8b5cf6   Acento secundario — sin cambios
+--c-green:        #10b981   Positivo — sin cambios
+--c-red:          #ef4444   Tensión — sin cambios
+```
+
+**Paleta expresionista** (nueva — alta energía):
+```
+--c-burn-orange:    #d44d0a   Naranja quemado — beat downbeat, splash
+--c-signal-yellow:  #e8c020   Amarillo saturado — alerta, paso beat-4
+--c-hot-coral:      #e8503a   Coral vibrante — tensión dramática
+--c-electric-cyan:  #00cce0   Cian eléctrico — indicadores de precisión
+--c-deep-indigo:    #2a20a8   Índigo profundo — calma, resolución
+--c-forest:         #148050   Verde bosque — resolución armónica
+```
+
+---
 
 ### Paleta de tonalidades (12 notas)
-<!-- Completar después de la sesión 1 -->
-- C:
-- C#:
-- D:
-- D#:
-- E:
-- F:
-- F#:
-- G:
-- G#:
-- A:
-- A#:
-- B:
+
+**Lógica**: Círculo de quintas mapeado al espectro visible completo.
+C (tónica) = ámbar cálido (30°). Avanzando en quintas (sostenidos) la
+paleta se enfría hacia el azul-cian. Girando en bemoles la paleta vira
+hacia el rojo. Los 12 colores están separados exactamente 30° en el
+círculo cromático para máxima distinguibilidad sobre #080c1a.
+
+Secuencia del círculo de quintas → hue progression:
+
+```
+C   → hsl(30,  92%, 60%)   Ámbar dorado     — tónica "home"
+G   → hsl(60,  88%, 55%)   Amarillo eléctrico — quinta arriba
+D   → hsl(90,  82%, 52%)   Lima vibrante    — segunda mayor
+A   → hsl(120, 68%, 50%)   Verde esmeralda  — sexta mayor
+E   → hsl(150, 72%, 50%)   Menta teal       — tercera mayor
+B   → hsl(180, 80%, 52%)   Cian eléctrico   — séptima mayor
+F#  → hsl(210, 80%, 60%)   Azul cielo       — tritono (tensión máxima)
+C#  → hsl(240, 72%, 65%)   Azul perinola    — bemol séptima
+G#  → hsl(270, 74%, 62%)   Violeta suave    — bemol cuarta
+D#  → hsl(300, 76%, 58%)   Magenta          — bemol segunda
+A#  → hsl(330, 84%, 60%)   Rosa caliente    — bemol sexta
+F   → hsl(0,   82%, 60%)   Rojo coral       — subdominante
+```
+
+El color activo se expone via `--active-key-color` (default C).
+Actualizar desde JS: `document.documentElement.style.setProperty('--active-key-color', 'var(--c-tone-G)')`
+
+---
 
 ### Animaciones de navegación principal
 <!-- Completar después de la sesión 2 -->
