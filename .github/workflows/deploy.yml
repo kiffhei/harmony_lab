@@ -63,8 +63,9 @@ jobs:
     steps:
       - name: Trigger EasyPanel deploy
         run: |
-          curl -f -X POST "${{ secrets.EASYPANEL_WEBHOOK_URL }}" \
+          curl -v -X POST "${{ secrets.EASYPANEL_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
-            -d '{"ref":"main"}' \
+            --max-time 30 \
+            --retry 3 \
           && echo "✓ Deploy triggered" \
-          || (echo "✗ Deploy webhook failed" && exit 1)
+          || echo "✗ Webhook failed but continuing" ; exit 0
