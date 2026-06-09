@@ -423,32 +423,57 @@ Rama main siempre deployable.
 
 ---
 
-## Estado al cierre de sesión — Semana 1 + Diseño
+## Estado al cierre de sesión — Semana 2 · Block 1 completado
 
-### Core completado (450 tests)
+### Core completado (450 tests) — Semana 1
 - MusicTheory.js, AudioEngine.js, MidiExport.js
 - SequencerEngine.js, HarmonyGraph.js
 - ProgressionEngine.js, TunerEngine.js
 
-### Hooks completados
+### Hooks completados — Semana 1
 - useMusicContext, useAudioEngine, useDevice
 - useAnimatedBackground, useSequencer
 - useHarmonyMap, useProgressions, useTuner
 
-### Sistema de diseño completado
+### Sistema de diseño completado — Semana 1
 - src/styles/tokens.css — paleta, tipografía, tokens
 - src/styles/globals.css — componentes base con estados
 - src/styles/modules/ — identidad visual 9 módulos
 - src/animations/backgrounds/ — 4 backgrounds animados
-- src/components/Splash/ — pantalla de entrada
 - components.json — registry @cult-ui configurado
 - .mcp.json — MCP shadcn configurado
 
-### Pendiente para Semana 2
-- Implementar componentes UI de todos los módulos
-- Instalar componentes Cult UI con: npx shadcn@beta add @cult-ui/<nombre>
-- DesktopLayout, TabletLayout, MobileLayout
-- Integrar backgrounds animados con módulos
+### Semana 2 · Block 1 — Shell de navegación + Splash ✅
+
+**Commits:**
+- `40c58b2` feat(layout): desktop shell with 4-tab navigation and tonality gradient
+- `d1bef56` feat(splash): welcome screen with animated module cards and tonality dots
+
+**Archivos creados/modificados:**
+- `src/App.jsx` — MusicProvider + DesktopLayout + import globals.css
+- `src/layouts/DesktopLayout.jsx` — shell 3 columnas: sidebar 64px + panel 260px + main flex-1
+- `src/components/Splash/Splash.jsx` — pantalla de inicio con 9 cards animadas
+
+**Decisiones de implementación:**
+- Shell usa clases CSS del design system (`.app-layout`, `.sidebar-nav`, `.sidebar-nav-item`)
+- Tailwind arbitrary values para tokens: `bg-[var(--c-elevated)]`, `text-[var(--c-amber)]`, etc.
+- Splash abre por defecto (`showSplash = true`); botón ⌂ regresa a ella desde cualquier módulo
+- Cards con stagger animation vía `<style>` keyframes: delay `idx * 60ms`
+- 12 dots de tonalidad con `dotPulse` 2s infinite, delay `idx * 0.15s`
+- TonalityGradient en placeholder: `radial-gradient` con `var(--active-key-color)` (reacciona a MusicContext)
+- Panel muestra "Módulos" sin sub-nav cuando showSplash = true
+
+**Navegación funcional:**
+- 4 tabs: Armonía / Instrumentos / Ritmo / Herramientas
+- Cambiar tab → primer módulo del tab queda activo
+- Click en card del Splash → navega directo al módulo correcto
+- `npm run build` ✅ — 0 errores, 0 warnings
+
+### Pendiente — Semana 2 (continuación)
+- Componentes UI de módulos (HarmonyMap, Piano, Guitar, KeyExplorer, Progressions)
+- Semana 3: Sequencer, PatternLibrary
+- Semana 4: Tuner, SongAnalyzer, backgrounds animados, Framer Motion
+- Semana 5: TabletLayout, MobileLayout, CI/CD, deploy EasyPanel
 
 ---
 
