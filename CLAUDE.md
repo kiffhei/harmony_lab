@@ -420,3 +420,33 @@ OpenAI, Google Workspace, Aspel ERP.
 Portafolio técnico público — el código debe ser legible, 
 bien documentado y presentable.
 Rama main siempre deployable.
+
+---
+
+## Estado al cierre de sesión — Semana 1 + Diseño
+
+### Core completado (450 tests)
+- MusicTheory.js, AudioEngine.js, MidiExport.js
+- SequencerEngine.js, HarmonyGraph.js
+- ProgressionEngine.js, TunerEngine.js
+
+### Hooks completados
+- useMusicContext, useAudioEngine, useDevice
+- useAnimatedBackground, useSequencer
+- useHarmonyMap, useProgressions, useTuner
+
+### Sistema de diseño completado
+- src/styles/tokens.css — paleta, tipografía, tokens
+- src/styles/globals.css — componentes base con estados
+- src/styles/modules/ — identidad visual 9 módulos
+- src/animations/backgrounds/ — 4 backgrounds animados
+- src/components/Splash/ — pantalla de entrada
+- components.json — registry @cult-ui configurado
+- .mcp.json — MCP shadcn configurado
+
+### Pendiente para Semana 2
+- Implementar componentes UI de todos los módulos
+- Instalar componentes Cult UI con: npx shadcn@beta add @cult-ui/<nombre>
+- DesktopLayout, TabletLayout, MobileLayout
+- Integrar backgrounds animados con módulos
+- Bug conocido: verificar que index.html no tenga CDN de Tailwind
