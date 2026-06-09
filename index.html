@@ -1,28 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <script>
-      // DIAGNÓSTICO CDN — remover después de fix
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === 'SCRIPT' || node.tagName === 'LINK') {
-              const src = node.src || node.href || '';
-              if (src.includes('cdn') || src.includes('tailwind')) {
-                console.error('[CDN DETECTOR] Inyectado por:', node);
-                console.error('[CDN DETECTOR] src/href:', src);
-                console.trace('[CDN DETECTOR] Stack trace');
-              }
-            }
-          });
-        });
-      });
-      observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true
-      });
-      console.log('[CDN DETECTOR] Observando DOM...');
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Harmony Lab Pro — Composición asistida, exploración armónica y secuenciación rítmica" />
