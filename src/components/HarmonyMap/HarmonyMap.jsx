@@ -17,9 +17,20 @@ const FUNC_LABEL = { T: 'Tónica', S: 'Subdominante', D: 'Dominante' };
 function nodePosition(index, total) {
   const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
   return {
-    x: 50 + 38 * Math.cos(angle),
-    y: 50 + 38 * Math.sin(angle),
+    x: 50 + 42 * Math.cos(angle),
+    y: 48 + 36 * Math.sin(angle),
   };
+}
+
+function labelRelacion(type) {
+  const MAP = {
+    resolution:   '→ Resolución',
+    preparation:  '→ Preparación',
+    prolongation: '→ Prolongación',
+    subdominant:  '→ Subdominante',
+    deceptive:    '→ Cadencia rota',
+  };
+  return MAP[type] ?? '→ Movimiento';
 }
 
 // ── Componente principal ──────────────────────────────────────────────────────
@@ -31,6 +42,7 @@ export default function HarmonyMap() {
     activeChord,
     suggestions,
     progression,
+    commonProgressions,
     handleSelectChord,
     handleAddToProgression,
   } = useHarmonyMap();
@@ -66,7 +78,7 @@ export default function HarmonyMap() {
       />
 
       {/* ── Canvas SVG ─────────────────────────────────────────────────── */}
-      <div className="harmony-canvas">
+      <div className="harmony-canvas" style={{ height: '340px', minHeight: '340px' }}>
 
         {/* Aristas entre nodos */}
         <svg
@@ -149,6 +161,61 @@ export default function HarmonyMap() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Panel de sugerencias ───────────────────────────────────────── */}
+      <AnimatePresence>
+        {activeChord && suggestions.length > 0 && (
+          <motion.div
+            key={`suggestions-${activeChord.roman}`}
+            className="harmony-suggestions"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.2 }}
+          >
+            <span className="harmony-suggestions-label">
+              Movimientos desde {activeChord.roman}
+            </span>
+            <div className="harmony-suggestions-list">
+              {suggestions.map(({ node, relation }) => {
+                const suf = QUALITY_SUFFIX[node.quality] ?? '';
+                return (
+                  <button
+                    key={node.roman}
+                    className="harmony-suggestion-chip"
+                    onClick={() => handleSelectChord(node)}
+                  >
+                    <span className="suggestion-roman">{node.roman}</span>
+                    <span className="suggestion-name">{node.root}{suf}</span>
+                    <span className="suggestion-relation">{labelRelacion(relation.type)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Progresiones comunes ────────────────────────────────────────── */}
+      {commonProgressions.length > 0 && (
+        <div className="harmony-common-progressions">
+          <span className="harmony-section-label">Progresiones comunes</span>
+          <div className="harmony-prog-presets">
+            {commonProgressions.map((prog) => (
+              <button
+                key={prog.name}
+                className="harmony-prog-preset"
+                onClick={() => setProgression(prog.chords)}
+              >
+                <span className="preset-name">{prog.name}</span>
+                <span className="preset-chords">
+                  {prog.chords.map((c) => c.roman).join(' – ')}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── Barra de progresión ─────────────────────────────────────────── */}
       <div className="harmony-progression-bar">

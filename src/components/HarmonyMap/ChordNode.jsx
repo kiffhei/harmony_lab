@@ -24,7 +24,11 @@ export default function ChordNode({ node, isActive = false, isSelected = false, 
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       data-testid={`chord-node-${node.roman}`}
     >
-      <div className={nodeClass} onClick={onClick}>
+      <div
+        className={nodeClass}
+        onClick={onClick}
+        style={node.degree === 0 ? { width: '68px', height: '68px' } : undefined}
+      >
         <span className="chord-node-roman">{node.roman}</span>
         <span className="chord-node-name">{node.root}</span>
         <span className="chord-node-quality">{suffix}</span>

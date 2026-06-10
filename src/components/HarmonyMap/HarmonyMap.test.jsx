@@ -110,4 +110,44 @@ describe('HarmonyMap', () => {
     expect(nodes.length).toBeLessThanOrEqual(7);
   });
 
+  it('panel de sugerencias visible tras click en nodo', () => {
+    renderWithProvider(<HarmonyMap />);
+    fireEvent.click(screen.getByTestId('chord-node-I').querySelector('.chord-node'));
+    expect(document.querySelector('.harmony-suggestions')).toBeInTheDocument();
+  });
+
+  it('las sugerencias muestran el label de relación', () => {
+    renderWithProvider(<HarmonyMap />);
+    fireEvent.click(screen.getByTestId('chord-node-I').querySelector('.chord-node'));
+    const labels = document.querySelectorAll('.suggestion-relation');
+    expect(labels.length).toBeGreaterThan(0);
+    expect(labels[0].textContent).toMatch(/→/);
+  });
+
+  it('click en sugerencia cambia activeChord', () => {
+    renderWithProvider(<HarmonyMap />);
+    // Activar el nodo V (dominante) para tener sugerencias de resolución
+    fireEvent.click(screen.getByTestId('chord-node-V').querySelector('.chord-node'));
+    const chips = document.querySelectorAll('.harmony-suggestion-chip');
+    expect(chips.length).toBeGreaterThan(0);
+    // Click en la primera sugerencia
+    fireEvent.click(chips[0]);
+    // El panel de info sigue visible (activeChord actualizado)
+    expect(document.querySelector('.harmony-chord-info')).toBeInTheDocument();
+  });
+
+  it('commonProgressions se renderizan como botones', () => {
+    renderWithProvider(<HarmonyMap />);
+    const presets = document.querySelectorAll('.harmony-prog-preset');
+    expect(presets.length).toBeGreaterThan(0);
+  });
+
+  it('click en progresión preset carga los acordes en progression', () => {
+    renderWithProvider(<HarmonyMap />);
+    const presets = document.querySelectorAll('.harmony-prog-preset');
+    fireEvent.click(presets[0]);
+    const progChords = document.querySelectorAll('.harmony-prog-chord');
+    expect(progChords.length).toBeGreaterThan(0);
+  });
+
 });
