@@ -502,6 +502,55 @@ el mismo sistema de indicador pero horizontal (top 2px).
 
 ---
 
+### Pendiente de revisión — KeyExplorer layout
+El módulo KeyExplorer tiene un problema de altura en desktop:
+el contenido de la columna derecha (chips + tabla de grados)
+se desborda fuera del panel visible. El SVG también se corta
+por arriba en viewports menores a 800px de alto.
+
+Causas identificadas:
+- El panel principal de DesktopLayout no propaga height: 100%
+  correctamente hasta el contenedor del módulo
+- .circle-of-fifths-wrapper con min(400px, 40vw) sigue siendo
+  demasiado grande para viewports de 691px de alto
+- La columna derecha necesita overflow-y: auto con una altura
+  máxima calculada (100vh - topbar - padding)
+
+Solución recomendada para sesión de diseño:
+- Rediseñar el módulo con altura fija por sección
+- Considerar tabs internos en la columna derecha:
+  tab "Notas" (chips) y tab "Grados" (tabla)
+- O reducir el SVG a max 320px y hacer la columna derecha
+  scrolleable con scrollbar styled
+
+---
+
+### Pendiente de revisión — HarmonyMap elipse de nodos
+Los 7 nodos diatónicos se posicionan en elipse calculada
+con porcentajes del contenedor. En viewports wide (>1000px)
+el canvas es mucho más ancho que alto, resultando en una
+distribución horizontal aplastada que parece pirámide.
+
+En mobile (screenshot capturado) se ve correctamente circular.
+
+Causas identificadas:
+- rx y ry calculados como % fijos sin considerar el aspect ratio
+  del canvas en cada breakpoint
+- Canvas height: clamp(300px, 40vh, 480px) vs ancho ~830px
+  da ratio 1:2.7 que aplasta la elipse
+
+Solución implementada (en revisión):
+- ResizeObserver en el canvas para recalcular rx/ry en px reales
+- rx = min(w * 0.42, h * 0.72), ry = min(h * 0.40, w * 0.22)
+
+Si persiste, solución de diseño alternativa:
+- Limitar el ancho del canvas con max-width: 600px centrado
+- O cambiar distribución a grid 3x3 en lugar de elipse
+- O mover el canvas a columna izquierda (layout 2 columnas
+  como KeyExplorer) con paneles a la derecha
+
+---
+
 ## Contexto del autor
 
 Brian Eduardo Anaya Ruiz — Consultor de automatización y 

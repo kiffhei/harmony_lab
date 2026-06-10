@@ -17,7 +17,7 @@ export default function ChordNode({ node, isActive = false, isSelected = false, 
   return (
     <motion.div
       className="chord-node-wrapper"
-      style={{ left: `${node.x}%`, top: `${node.y}%` }}
+      style={{ left: `${node.x}px`, top: `${node.y}px` }}
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.92 }}
       animate={{ scale: isActive ? [1, 1.12, 1] : 1 }}

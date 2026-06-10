@@ -5,6 +5,13 @@ import HarmonyMap from './HarmonyMap.jsx';
 import { MusicProvider } from '../../context/MusicContext.jsx';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
 
+// ResizeObserver no existe en jsdom
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe:    vi.fn(),
+  unobserve:  vi.fn(),
+  disconnect: vi.fn(),
+}));
+
 // Evita AudioContext en jsdom
 vi.mock('../../hooks/useAudioEngine.js', () => ({
   useAudioEngine: () => ({

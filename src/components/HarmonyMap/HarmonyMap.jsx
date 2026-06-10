@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useHarmonyMap } from '../../hooks/useHarmonyMap.js';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
@@ -14,11 +14,16 @@ const FUNC_LABEL = { T: 'Tónica', S: 'Subdominante', D: 'Dominante' };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function nodePosition(index, total) {
+function nodePosition(index, total, canvasSize) {
+  const { w, h } = canvasSize;
+  const cx = w / 2;
+  const cy = h / 2;
+  const rx = Math.min(w * 0.42, h * 0.72);
+  const ry = Math.min(h * 0.40, w * 0.22);
   const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
   return {
-    x: 50 + 42 * Math.cos(angle),
-    y: 48 + 36 * Math.sin(angle),
+    x: cx + rx * Math.cos(angle),
+    y: cy + ry * Math.sin(angle),
   };
 }
 
@@ -49,9 +54,22 @@ export default function HarmonyMap() {
 
   const { setProgression } = useMusicContext();
 
+  const canvasRef = useRef(null);
+  const [canvasSize, setCanvasSize] = useState({ w: 600, h: 340 });
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const ro = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setCanvasSize({ w: width, h: height });
+    });
+    ro.observe(canvasRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   const nodesWithPos = useMemo(
-    () => nodes.map((node, i) => ({ ...node, ...nodePosition(i, nodes.length) })),
-    [nodes]
+    () => nodes.map((node, i) => ({ ...node, ...nodePosition(i, nodes.length, canvasSize) })),
+    [nodes, canvasSize]
   );
 
   const progressionSet = useMemo(
@@ -78,13 +96,16 @@ export default function HarmonyMap() {
       />
 
       {/* ── Canvas SVG ─────────────────────────────────────────────────── */}
-      <div className="harmony-canvas" style={{ height: '340px', minHeight: '340px' }}>
+      <div
+        ref={canvasRef}
+        className="harmony-canvas"
+        style={{ height: 'clamp(300px, 40vh, 480px)', minHeight: '300px' }}
+      >
 
         {/* Aristas entre nodos */}
         <svg
           className="harmony-edges-svg"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
+          viewBox={`0 0 ${canvasSize.w} ${canvasSize.h}`}
           data-testid="harmony-edges"
         >
           {relations.map((rel, i) => {

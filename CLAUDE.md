@@ -329,11 +329,21 @@ SEMANA 1 — FUNDAMENTOS
 ├── /tdd → MidiExport.js + tests completos
 └── MusicContext.jsx + hooks
 
-SEMANA 2 — MÓDULOS PRINCIPALES
-├── HarmonyMap + ChordNode
+SEMANA 2 — MÓDULOS PRINCIPALES (EN PROGRESO)
+├── ✅ Bloque 1: DesktopLayout + Splash
+├── ✅ Bloque 2: KeyExplorer
+│     - Circle of Fifths SVG interactivo
+│     - MoodBanner con 12 escalas (incl. Double Harmonic, Phrygian Dominant)
+│     - Gradiente dual --active-key-color + --active-scale-color
+│     ⚠️  PENDIENTE DISEÑO: layout height overflow en desktop (~691px)
+│         Ver sección "Pendiente de revisión" en DESIGNER.md
+├── ✅ Bloque 3: HarmonyMap
+│     - 7 nodos diatónicos en elipse con aristas tipificadas
+│     - Panel de sugerencias por acorde activo
+│     - 10 progresiones comunes cargables con 1 click
+│     ⚠️  PENDIENTE: elipse aplastada en desktop wide — fix en curso
 ├── Piano
 ├── Guitar
-├── KeyExplorer
 └── Progressions
 
 SEMANA 3 — RHYTHM LAB
@@ -389,6 +399,34 @@ GIT
 CIERRE
 /session-wrap           → resumen y próximos pasos
 ```
+
+---
+
+## Estado de la Semana 2 — registro de incidencias
+
+### Patrón de deploy identificado
+EasyPanel no siempre dispara build nuevo con cada push.
+Síntoma: deploy completa en <5s (restart) en lugar de ~60s (build).
+Solución probada: `git commit --allow-empty -m "chore: force rebuild"`
+Causa raíz: aún sin confirmar — puede ser caché de capas Docker.
+
+### Flujo de ramas establecido
+- Una rama por bloque: feat/key-explorer, feat/harmony-map, etc.
+- Tag de backup antes de cada bloque: backup/pre-bloqueN
+- Merge --no-ff a main al aprobar screenshot
+- NUNCA push directo a main durante desarrollo activo
+- El snapshot pre-sesión NO va a main — solo como tag local
+
+### Escalas agregadas a MusicTheory.js
+Semana 2 extendió el sistema con 2 escalas nuevas:
+- Double Harmonic [0,1,4,5,7,8,11] — Raga Bhairav / Glass Beams
+- Phrygian Dominant [0,1,4,5,7,8,10] — Makam Hüseyni / King Gizzard
+Total escalas: 12. Tests de MusicTheory: 85 passing.
+
+### Módulos con layout pendiente de revisión de diseño
+- KeyExplorer: columna derecha desborda en viewports < 750px alto
+- HarmonyMap: elipse de nodos aplastada en viewports wide (>1000px)
+Ambos documentados en DESIGNER.md sección "Pendiente de revisión".
 
 ---
 
