@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Splash from '../components/Splash/Splash.jsx';
+import KeyExplorer from '../components/KeyExplorer/KeyExplorer.jsx';
 
 const TABS = [
   { label: 'Armonía',      icon: '♩',  modules: ['Harmony Map', 'Key Explorer', 'Progressions'] },
@@ -136,7 +137,9 @@ export default function DesktopLayout() {
         <div className="app-content flex flex-col">
           {showSplash
             ? <Splash onNavigate={handleNavigate} />
-            : <ModulePlaceholder name={activeModule} />
+            : activeModule === 'Key Explorer'
+              ? <KeyExplorer />
+              : <ModulePlaceholder name={activeModule} />
           }
         </div>
       </main>

@@ -103,8 +103,24 @@
   --c-tone-As:  hsl(330, 84%, 60%);  /* Rosa caliente    — bemol sexta */
   --c-tone-F:   hsl(0,   82%, 60%);  /* Rojo coral       — subdominante */
 
+  /* Aliases --key-* — usados en Circle of Fifths y leídos por MusicContext
+     para actualizar --active-key-color via getComputedStyle. Valores HSL
+     literales (no var()) para que getPropertyValue retorne color resuelto. */
+  --key-C:   hsl(30,  92%, 60%);
+  --key-G:   hsl(60,  88%, 55%);
+  --key-D:   hsl(90,  82%, 52%);
+  --key-A:   hsl(120, 68%, 50%);
+  --key-E:   hsl(150, 72%, 50%);
+  --key-B:   hsl(180, 80%, 52%);
+  --key-Fs:  hsl(210, 80%, 60%);
+  --key-Cs:  hsl(240, 72%, 65%);
+  --key-Gs:  hsl(270, 74%, 62%);
+  --key-Ds:  hsl(300, 76%, 58%);
+  --key-As:  hsl(330, 84%, 60%);
+  --key-F:   hsl(0,   82%, 60%);
+
   /* Token dinámico — actualizado por JS: document.documentElement.style.setProperty('--active-key-color', ...) */
-  --active-key-color: var(--c-tone-C);
+  --active-key-color: var(--key-C);
   --active-key-glow:  rgba(245, 158, 11, 0.15);
 
 
