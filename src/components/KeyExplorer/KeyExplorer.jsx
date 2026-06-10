@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NOTES, getScale, getDiatonic, getScaleNames } from '../../core/MusicTheory.js';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
@@ -29,6 +29,83 @@ const DEGREE_FUNCTION = {
   'vii°': 'Sensible',
 };
 
+export const SCALE_MOOD = {
+  'Major': {
+    label: 'Alegría · Confianza',
+    desc:  'Energía solar, resolución, victoria',
+    color: '#f59e0b',
+    refs:  'Beethoven 9ª · Pop · Himnos',
+  },
+  'Minor': {
+    label: 'Melancolía · Introspección',
+    desc:  'Tristeza elegante, profundidad emocional',
+    color: '#6366f1',
+    refs:  'Chopin · R&B · Neo-soul',
+  },
+  'Harmonic Minor': {
+    label: 'Tensión · Drama',
+    desc:  'Suspenso, pasión intensa, conflicto',
+    color: '#dc2626',
+    refs:  'Flamenco · Metal sinfónico · Cine',
+  },
+  'Dorian': {
+    label: 'Serenidad · Groove',
+    desc:  'Minor con luz, fluidez, apertura',
+    color: '#0ea5e9',
+    refs:  'Miles Davis · Funk · Deep house',
+  },
+  'Phrygian': {
+    label: 'Misterio · Oscuridad',
+    desc:  'Exótico, amenazante, tierra árida',
+    color: '#b45309',
+    refs:  'Flamenco puro · Metal extremo · Glass Beams (Mahal)',
+  },
+  'Lydian': {
+    label: 'Ensueño · Maravilla',
+    desc:  'Flotante, etéreo, ciencia ficción',
+    color: '#a78bfa',
+    refs:  'John Williams · Joe Satriani · Dream pop',
+  },
+  'Mixolydian': {
+    label: 'Euforia · Fiesta',
+    desc:  'Mayor con tensión blues, apertura festiva',
+    color: '#16a34a',
+    refs:  'Rock clásico · Reggae · Blues-rock',
+  },
+  'Pentatonic Maj': {
+    label: 'Libertad · Apertura',
+    desc:  'Universal, sin tensión, folk del mundo',
+    color: '#f97316',
+    refs:  'Country · Folk · Pop universal',
+  },
+  'Pentatonic Min': {
+    label: 'Blues · Resiliencia',
+    desc:  'Grit, expresión cruda, alma urbana',
+    color: '#0d9488',
+    refs:  'Blues · Hip-hop · Reggae',
+  },
+  'Blues': {
+    label: 'Angustia · Catarsis',
+    desc:  'La nota blue, dolor consciente',
+    color: '#1d4ed8',
+    refs:  'Blues clásico · Jazz · Soul · Boom bap',
+  },
+  'Double Harmonic': {
+    label: 'Espiritualidad · Amanecer',
+    desc:  'Raga Bhairav — solemne, devocional, antiguo',
+    color: '#c026d3',
+    refs:  'Glass Beams · Música india clásica · Bollywood',
+    note:  'Equivalente occidental del Raga Bhairav (Glass Beams)',
+  },
+  'Phrygian Dominant': {
+    label: 'Hipnosis · Psicodelia',
+    desc:  'Makam Hüseyni en 12 tonos — envolvente, sin fin',
+    color: '#ea580c',
+    refs:  'King Gizzard (proxy microtonal) · Música turca · Anatolian rock',
+    note:  'Aproximación en 12 tonos al makam Hüseyni de King Gizzard',
+  },
+};
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function cofPosition(index) {
@@ -41,6 +118,33 @@ function cofPosition(index) {
 
 function noteColor(note) {
   return `var(${NOTE_TO_CSS_VAR[note]})`;
+}
+
+// ── MoodBanner ────────────────────────────────────────────────────────────────
+
+function MoodBanner({ scaleName }) {
+  const mood = SCALE_MOOD[scaleName];
+  if (!mood) return null;
+
+  return (
+    <motion.div
+      key={scaleName}
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="key-mood-banner"
+      style={{ '--mood-color': mood.color }}
+    >
+      <div className="key-mood-header">
+        <span className="key-mood-label">{mood.label}</span>
+        {mood.note && (
+          <span className="key-mood-note">{mood.note}</span>
+        )}
+      </div>
+      <p className="key-mood-desc">{mood.desc}</p>
+      <p className="key-mood-refs">{mood.refs}</p>
+    </motion.div>
+  );
 }
 
 // ── Componente principal ──────────────────────────────────────────────────────
@@ -57,6 +161,17 @@ export default function KeyExplorer() {
   const scaleSet   = useMemo(() => new Set(scaleNotes),              [scaleNotes]);
   const scaleNames = useMemo(() => getScaleNames(), []);
 
+  // Actualiza --active-scale-color con el color emocional de la escala activa
+  useEffect(() => {
+    const mood = SCALE_MOOD[scaleName];
+    if (mood) {
+      document.documentElement.style.setProperty('--active-scale-color', mood.color);
+    }
+    return () => {
+      document.documentElement.style.removeProperty('--active-scale-color');
+    };
+  }, [scaleName]);
+
   // Polilínea que conecta los nodos en-escala en orden de la escala
   const scaleLinePoints = useMemo(() => {
     const pts = scaleNotes.map((note) => {
@@ -71,7 +186,7 @@ export default function KeyExplorer() {
   return (
     <div className="key-explorer-module">
 
-      {/* Background reactivo a --active-key-color */}
+      {/* Background reactivo a --active-key-color + --active-scale-color */}
       <div className="key-tonality-bg" aria-hidden="true" />
 
       {/* ── Sección 1 — Selectores ─────────────────────────────────────── */}
@@ -98,6 +213,9 @@ export default function KeyExplorer() {
           ))}
         </select>
       </div>
+
+      {/* ── Sección 1B — MoodBanner ────────────────────────────────────── */}
+      <MoodBanner scaleName={scaleName} />
 
       {/* ── Sección 2 — Circle of Fifths ──────────────────────────────── */}
       <div className="circle-of-fifths-wrapper">
@@ -168,8 +286,8 @@ export default function KeyExplorer() {
               r={28}
               className="cof-center-circle"
               style={{
-                fill:   'rgba(245,158,11,0.15)',
-                stroke: 'var(--c-amber)',
+                fill:        'rgba(245,158,11,0.15)',
+                stroke:      'var(--c-amber)',
                 strokeWidth: 1.5,
               }}
             />

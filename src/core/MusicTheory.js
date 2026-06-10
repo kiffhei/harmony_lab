@@ -19,6 +19,10 @@ export const SCALES = {
   'Pentatonic Maj': [0, 2, 4, 7, 9],
   'Pentatonic Min': [0, 3, 5, 7, 10],
   'Blues':          [0, 3, 5, 6, 7, 10],
+  // Double Harmonic = Raga Bhairav occidental (Glass Beams, música turca)
+  'Double Harmonic':   [0, 1, 4, 5, 7, 8, 11],
+  // Phrygian Dominant = Makam Hüseyni proxy 12-tone (King Gizzard microtonal)
+  'Phrygian Dominant': [0, 1, 4, 5, 7, 8, 10],
 };
 
 export const ROMAN = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];

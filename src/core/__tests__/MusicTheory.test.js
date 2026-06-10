@@ -34,8 +34,8 @@ describe('NOTES', () => {
 // ── SCALES ────────────────────────────────────────────────────────────────────
 
 describe('SCALES', () => {
-  it('tiene 10 escalas definidas', () => {
-    expect(Object.keys(SCALES)).toHaveLength(10);
+  it('tiene 12 escalas definidas', () => {
+    expect(Object.keys(SCALES)).toHaveLength(12);
   });
 
   it('Major tiene los intervalos correctos', () => {
@@ -112,6 +112,27 @@ describe('getScale()', () => {
       const scale = getScale(root, 'Major');
       expect(scale[0]).toBe(root);
     });
+  });
+
+  it('Double Harmonic desde C', () => {
+    expect(getScale('C', 'Double Harmonic'))
+      .toEqual(['C', 'C#', 'E', 'F', 'G', 'G#', 'B']);
+  });
+
+  it('Phrygian Dominant desde C', () => {
+    expect(getScale('C', 'Phrygian Dominant'))
+      .toEqual(['C', 'C#', 'E', 'F', 'G', 'G#', 'A#']);
+  });
+
+  it('Double Harmonic desde A', () => {
+    expect(getScale('A', 'Double Harmonic'))
+      .toEqual(['A', 'A#', 'C#', 'D', 'E', 'F', 'G#']);
+  });
+
+  it('getScaleNames incluye las 2 escalas nuevas', () => {
+    const names = getScaleNames();
+    expect(names).toContain('Double Harmonic');
+    expect(names).toContain('Phrygian Dominant');
   });
 });
 
@@ -385,8 +406,8 @@ describe('getScaleNames()', () => {
     expect(names).toContain('Minor');
   });
 
-  it('tiene 10 escalas', () => {
-    expect(getScaleNames()).toHaveLength(10);
+  it('tiene 12 escalas', () => {
+    expect(getScaleNames()).toHaveLength(12);
   });
 });
 

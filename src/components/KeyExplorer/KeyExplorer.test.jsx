@@ -1,8 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
-import KeyExplorer from './KeyExplorer.jsx';
+import KeyExplorer, { SCALE_MOOD } from './KeyExplorer.jsx';
 import { MusicProvider } from '../../context/MusicContext.jsx';
+import { getScaleNames } from '../../core/MusicTheory.js';
 
 function renderWithProvider(ui) {
   return render(<MusicProvider>{ui}</MusicProvider>);
@@ -106,6 +108,41 @@ describe('KeyExplorer', () => {
     const rootTspan = Array.from(tspans).find((t) => t.getAttribute('fontSize') === '14' || t.textContent === 'C');
     expect(rootTspan).toBeTruthy();
     expect(rootTspan.textContent).toBe('C');
+  });
+
+  it('MoodBanner se renderiza con la escala activa', () => {
+    renderWithProvider(<KeyExplorer />);
+    expect(screen.getByText('Alegría · Confianza')).toBeInTheDocument();
+  });
+
+  it('MoodBanner cambia al cambiar la escala', async () => {
+    renderWithProvider(<KeyExplorer />);
+    const scaleSelect = screen.getByRole('combobox', { name: /scale/i });
+    await userEvent.selectOptions(scaleSelect, 'Dorian');
+    expect(screen.getByText('Serenidad · Groove')).toBeInTheDocument();
+  });
+
+  it('Double Harmonic muestra nota aclaratoria de Glass Beams', async () => {
+    renderWithProvider(<KeyExplorer />);
+    const scaleSelect = screen.getByRole('combobox', { name: /scale/i });
+    await userEvent.selectOptions(scaleSelect, 'Double Harmonic');
+    // "Glass Beams" aparece en .key-mood-note y en .key-mood-refs
+    expect(screen.getAllByText(/Glass Beams/).length).toBeGreaterThan(0);
+  });
+
+  it('Phrygian Dominant muestra nota aclaratoria de King Gizzard', async () => {
+    renderWithProvider(<KeyExplorer />);
+    const scaleSelect = screen.getByRole('combobox', { name: /scale/i });
+    await userEvent.selectOptions(scaleSelect, 'Phrygian Dominant');
+    // "King Gizzard" aparece en .key-mood-note y en .key-mood-refs
+    expect(screen.getAllByText(/King Gizzard/).length).toBeGreaterThan(0);
+  });
+
+  it('las 12 escalas tienen entrada en SCALE_MOOD', () => {
+    const scales = getScaleNames();
+    scales.forEach((scale) => {
+      expect(SCALE_MOOD[scale]).toBeDefined();
+    });
   });
 
 });

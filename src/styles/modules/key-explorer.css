@@ -262,20 +262,84 @@
   color: var(--c-dim);
 }
 
-/* Background TonalityGradient — mismo que HarmonyMap */
+/* Background dual — escala (emoción) + nota raíz (tonalidad) */
 .key-tonality-bg {
   position: absolute;
   inset: 0;
   z-index: var(--z-bg);
   pointer-events: none;
-  background: radial-gradient(
-    ellipse 70% 50% at 50% 35%,
-    var(--active-key-color) 0%,
-    transparent 65%
-  );
+  background:
+    radial-gradient(
+      ellipse 60% 40% at 50% 0%,
+      var(--active-scale-color) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 40% 60% at 80% 80%,
+      var(--active-key-color) 0%,
+      transparent 55%
+    );
   opacity: var(--bg-default-opacity);
-  transition: opacity var(--dur-slower) var(--ease-out),
-              background var(--dur-slower) var(--ease-out);
+  transition: opacity      var(--dur-slower) var(--ease-out),
+              background   var(--dur-slower) var(--ease-out);
+}
+
+/* ── Mood Banner ────────────────────────────────────────────────────────── */
+
+.key-mood-banner {
+  width: 100%;
+  max-width: 480px;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  border-left: 3px solid var(--mood-color);
+  background: color-mix(in srgb, var(--mood-color) 8%, var(--c-elevated));
+  transition:
+    background   var(--dur-normal) var(--ease-out),
+    border-color var(--dur-normal) var(--ease-out);
+}
+
+.key-mood-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-1);
+}
+
+.key-mood-label {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  color: var(--mood-color);
+  line-height: 1;
+  transition: color var(--dur-normal) var(--ease-out);
+}
+
+.key-mood-note {
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide);
+  color: var(--c-muted);
+  font-style: italic;
+}
+
+.key-mood-desc {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--c-text-secondary);
+  margin: 0 0 var(--s-1) 0;
+  line-height: 1.4;
+}
+
+.key-mood-refs {
+  font-family: var(--font-condensed);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--c-dim);
+  margin: 0;
 }
 
 /* Responsive */

@@ -119,9 +119,10 @@
   --key-As:  hsl(330, 84%, 60%);
   --key-F:   hsl(0,   82%, 60%);
 
-  /* Token dinámico — actualizado por JS: document.documentElement.style.setProperty('--active-key-color', ...) */
-  --active-key-color: var(--key-C);
-  --active-key-glow:  rgba(245, 158, 11, 0.15);
+  /* Tokens dinámicos — actualizados desde JS al cambiar rootNote / scaleName */
+  --active-key-color:   var(--key-C);   /* nota raíz — actualizado por MusicContext */
+  --active-scale-color: #f59e0b;        /* emoción de escala — actualizado por KeyExplorer */
+  --active-key-glow:    rgba(245, 158, 11, 0.15);
 
 
   /* ═══════════════════════════════════════════════════════════════════════
