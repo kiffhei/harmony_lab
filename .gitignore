@@ -37,3 +37,8 @@ vite.config.js.timestamp*
 # Archives
 *.tar.gz
 *.zip
+
+# Claude Code interno
+.claude/
+CLAUDE.internal.md
+CLAUDE.local.md

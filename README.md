@@ -56,6 +56,8 @@ TabletLayout · MobileLayout · CI/CD · Deploy producción
 
 ## Tests
 
+![CI](https://github.com/kiffhei/harmony_lab/actions/workflows/deploy.yml/badge.svg)
+
 ```
 npm test
 ```
@@ -77,11 +79,12 @@ npm test          # suite completa
 
 ## Infraestructura
 
-- **VPS:** Hostinger 89.116.167.180
-- **Panel:** EasyPanel puerto 3000
+- **VPS:** Hostinger (EasyPanel)
 - **Proyecto:** clawdbot / servicio: harmony-lab
 - **CI/CD:** GitHub Actions → webhook EasyPanel en push a main
 - **Docker:** multistage node:20-alpine, puerto 4000
+
+> ⚠️ Deploy en revisión — ejecutar localmente con `npm run dev` mientras se restaura el servicio.
 
 ---
 

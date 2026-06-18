@@ -527,7 +527,7 @@ Rama main siempre deployable.
 3. Se destruyó y recreó el servicio `harmony-lab` en EasyPanel desde cero
 4. Build Docker exitoso: `dist/index.html 1.06 kB`, `79.28 kB CSS`, `0 errores`
 5. Se actualizó el secret `EASYPANEL_WEBHOOK_URL` en GitHub Actions con el nuevo webhook:
-   `http://89.116.167.180:3000/api/deploy/8783735a2ab991b4b131b9a3570d34503eed3d11836f7669`
+   `[URL en GitHub Secret: EASYPANEL_WEBHOOK_URL]`
 6. Se configuró el dominio en EasyPanel:
    `https://clawdbot-harmony-lab.u555aa.easypanel.host → http://clawdbot_harmony-lab:4000/`
 
@@ -554,7 +554,7 @@ node server.js
 ```
 Si falla, el error indicará la causa exacta.
 
-### Webhook de deploy (nueva URL tras recrear servicio)
+### Webhook de deploy
 ```
-http://89.116.167.180:3000/api/deploy/8783735a2ab991b4b131b9a3570d34503eed3d11836f7669
+[URL almacenada en GitHub Secret: EASYPANEL_WEBHOOK_URL]
 ```
