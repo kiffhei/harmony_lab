@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import Splash from '../components/Splash/Splash.jsx';
 import HarmonyMap from '../components/HarmonyMap/HarmonyMap.jsx';
 import KeyExplorer from '../components/KeyExplorer/KeyExplorer.jsx';
+import Piano from '../components/Piano/Piano.jsx';
+import Guitar from '../components/Guitar/Guitar.jsx';
+import Progressions from '../components/Progressions/Progressions.jsx';
 
 const TABS = [
   { label: 'Armonía',      icon: '♩',  modules: ['Harmony Map', 'Key Explorer', 'Progressions'] },
@@ -142,7 +145,13 @@ export default function DesktopLayout() {
               ? <HarmonyMap />
               : activeModule === 'Key Explorer'
                 ? <KeyExplorer />
-                : <ModulePlaceholder name={activeModule} />
+                : activeModule === 'Progressions'
+                  ? <Progressions />
+                  : activeModule === 'Piano'
+                    ? <Piano />
+                    : activeModule === 'Guitar'
+                      ? <Guitar />
+                      : <ModulePlaceholder name={activeModule} />
           }
         </div>
       </main>
