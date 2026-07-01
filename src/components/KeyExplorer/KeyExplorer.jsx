@@ -162,10 +162,11 @@ export default function KeyExplorer() {
     setProgression((prev) => [...prev, createProgressionChord(chord)]);
   }
 
-  const scaleNotes = useMemo(() => getScale(rootNote, scaleName),    [rootNote, scaleName]);
-  const diatonic   = useMemo(() => getDiatonic(rootNote, scaleName), [rootNote, scaleName]);
-  const scaleSet   = useMemo(() => new Set(scaleNotes),              [scaleNotes]);
-  const scaleNames = useMemo(() => getScaleNames(), []);
+  const scaleNotes  = useMemo(() => getScale(rootNote, scaleName),    [rootNote, scaleName]);
+  const diatonic    = useMemo(() => getDiatonic(rootNote, scaleName), [rootNote, scaleName]);
+  const scaleSet    = useMemo(() => new Set(scaleNotes),              [scaleNotes]);
+  const scaleNames  = useMemo(() => getScaleNames(), []);
+  const centerColor = SCALE_MOOD[scaleName]?.color ?? 'var(--c-amber)';
 
   // Actualiza --active-scale-color con el color emocional de la escala activa
   useEffect(() => {
@@ -268,9 +269,10 @@ export default function KeyExplorer() {
                 r={28}
                 className="cof-center-circle"
                 style={{
-                  fill:        'rgba(245,158,11,0.15)',
-                  stroke:      'var(--c-amber)',
+                  fill:        centerColor.startsWith('#') ? `${centerColor}26` : centerColor,
+                  stroke:      centerColor,
                   strokeWidth: 1.5,
+                  filter:      `drop-shadow(0 0 6px ${centerColor.startsWith('#') ? `${centerColor}66` : centerColor})`,
                 }}
               />
               <text className="cof-center-text" textAnchor="middle" dominantBaseline="central">
