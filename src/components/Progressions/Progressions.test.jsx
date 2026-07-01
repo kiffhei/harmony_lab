@@ -15,7 +15,7 @@ vi.mock('../../hooks/useAudioEngine.js', () => ({
   useAudioEngine: () => ({
     playTone:  vi.fn(),
     playChord: vi.fn(),
-    getEngine: vi.fn(),
+    getEngine: vi.fn(() => ({ getContext: () => ({ currentTime: 0 }) })),
   }),
 }));
 
@@ -26,6 +26,15 @@ vi.mock('../../core/MidiExport.js', async (importOriginal) => {
     exportProgression: vi.fn(),
   };
 });
+
+function chord(overrides) {
+  return {
+    id:      overrides.roman ?? Math.random().toString(36),
+    root:    'C', quality: 'maj', roman: 'I', notes: ['C', 'E', 'G'],
+    degree:  0, beats: 4, octave: 4,
+    ...overrides,
+  };
+}
 
 function renderWithProvider(ui) {
   return render(<MusicProvider>{ui}</MusicProvider>);
@@ -71,33 +80,27 @@ describe('Progressions', () => {
 
   it('renders chord cards when progression has items', () => {
     const { container } = renderWithChords([
-      { roman: 'I',  root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-      { roman: 'IV', root: 'F', quality: 'maj', notes: ['F', 'A', 'C'] },
+      chord({ id: 'a', roman: 'I',  root: 'C', notes: ['C', 'E', 'G'] }),
+      chord({ id: 'b', roman: 'IV', root: 'F', notes: ['F', 'A', 'C'] }),
     ]);
     const cards = container.querySelectorAll('.prog-chord-card');
     expect(cards).toHaveLength(2);
   });
 
   it('chord card shows roman numeral', () => {
-    const { container } = renderWithChords([
-      { roman: 'I', root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-    ]);
+    const { container } = renderWithChords([chord({ id: 'a', roman: 'I', root: 'C' })]);
     const roman = container.querySelector('.prog-chord-roman');
     expect(roman.textContent).toBe('I');
   });
 
   it('chord card shows chord name', () => {
-    const { container } = renderWithChords([
-      { roman: 'I', root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-    ]);
+    const { container } = renderWithChords([chord({ id: 'a', roman: 'I', root: 'C' })]);
     const name = container.querySelector('.prog-chord-name');
     expect(name.textContent).toContain('C');
   });
 
   it('delete button removes a chord', () => {
-    const { container } = renderWithChords([
-      { roman: 'I', root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-    ]);
+    const { container } = renderWithChords([chord({ id: 'a', roman: 'I', root: 'C' })]);
     const deleteBtn = container.querySelector('.prog-chord-delete');
     fireEvent.click(deleteBtn);
     expect(container.querySelectorAll('.prog-chord-card')).toHaveLength(0);
@@ -106,12 +109,14 @@ describe('Progressions', () => {
 
   it('deleting one of two chords leaves one remaining', () => {
     const { container } = renderWithChords([
-      { roman: 'I',  root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-      { roman: 'IV', root: 'F', quality: 'maj', notes: ['F', 'A', 'C'] },
+      chord({ id: 'a', roman: 'I',  root: 'C' }),
+      chord({ id: 'b', roman: 'IV', root: 'F' }),
     ]);
     const deleteBtns = container.querySelectorAll('.prog-chord-delete');
     fireEvent.click(deleteBtns[0]);
-    expect(container.querySelectorAll('.prog-chord-card')).toHaveLength(1);
+    const cards = container.querySelectorAll('.prog-chord-card');
+    expect(cards).toHaveLength(1);
+    expect(container.querySelector('.prog-chord-roman').textContent).toBe('IV');
   });
 
   it('play button is disabled when progression is empty', () => {
@@ -121,26 +126,20 @@ describe('Progressions', () => {
   });
 
   it('play button is enabled when progression has chords', () => {
-    const { container } = renderWithChords([
-      { roman: 'I', root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-    ]);
+    const { container } = renderWithChords([chord({ id: 'a', roman: 'I', root: 'C' })]);
     const playBtn = container.querySelector('[data-testid="prog-play-btn"]');
     expect(playBtn).not.toBeDisabled();
   });
 
   it('clicking play sets playing state', () => {
-    const { container } = renderWithChords([
-      { roman: 'I', root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-    ]);
+    const { container } = renderWithChords([chord({ id: 'a', roman: 'I', root: 'C' })]);
     const playBtn = container.querySelector('[data-testid="prog-play-btn"]');
     fireEvent.click(playBtn);
     expect(playBtn.textContent).toContain('Stop');
   });
 
   it('clicking stop resets playing state', () => {
-    const { container } = renderWithChords([
-      { roman: 'I', root: 'C', quality: 'maj', notes: ['C', 'E', 'G'] },
-    ]);
+    const { container } = renderWithChords([chord({ id: 'a', roman: 'I', root: 'C' })]);
     const playBtn = container.querySelector('[data-testid="prog-play-btn"]');
     fireEvent.click(playBtn);
     fireEvent.click(playBtn);
@@ -155,5 +154,13 @@ describe('Progressions', () => {
   it('prog-slots container is rendered', () => {
     const { container } = renderWithProvider(<Progressions />);
     expect(container.querySelector('.prog-slots')).toBeInTheDocument();
+  });
+
+  it('loop toggle button is present and toggles aria-pressed', () => {
+    renderWithProvider(<Progressions />);
+    const loopBtn = screen.getByLabelText('Toggle loop');
+    expect(loopBtn.getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(loopBtn);
+    expect(loopBtn.getAttribute('aria-pressed')).toBe('true');
   });
 });

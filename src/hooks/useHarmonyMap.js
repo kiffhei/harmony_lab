@@ -24,6 +24,7 @@ import {
   getCommonProgressions,
   degreesToChords,
 } from '../core/HarmonyGraph.js';
+import { createProgressionChord } from '../core/ProgressionEngine.js';
 
 /**
  * useHarmonyMap — Hook principal del módulo HarmonyMap.
@@ -119,10 +120,21 @@ export function useHarmonyMap() {
 
   /**
    * Agrega el acorde activo a la progresión.
+   * Lo normaliza a ProgressionChord (con beats/octave) para que sea
+   * reproducible por ProgressionPlayer.
    * @param {ChordNode} node
    */
   const handleAddToProgression = useCallback((node) => {
-    setProgression((prev) => [...prev, node]);
+    setProgression((prev) => [...prev, createProgressionChord(node)]);
+  }, [setProgression]);
+
+  /**
+   * Carga una progresión completa (ej. un preset de "progresiones comunes"),
+   * normalizando cada acorde a ProgressionChord.
+   * @param {ChordNode[]} chords
+   */
+  const handleLoadProgression = useCallback((chords) => {
+    setProgression(chords.map((c) => createProgressionChord(c)));
   }, [setProgression]);
 
   /**
@@ -149,6 +161,7 @@ export function useHarmonyMap() {
     handleSelectChord,
     handleClearChord,
     handleAddToProgression,
+    handleLoadProgression,
     getRelationBetween,
   };
 }

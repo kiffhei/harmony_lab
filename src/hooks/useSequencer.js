@@ -9,12 +9,11 @@
  * - Proveer handlers para toggle de pasos, play/stop, BPM
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useMusicContext } from './useMusicContext.js';
 import { useAudioEngine } from './useAudioEngine.js';
 import {
   SequencerEngine,
-  createEmptyPattern,
   createDefaultPattern,
   toggleStep,
   clearPattern,
@@ -44,18 +43,20 @@ import {
  * }}
  */
 export function useSequencer() {
-  const { bpm, setBpm, isPlaying, setIsPlaying } = useMusicContext();
+  const {
+    bpm, setBpm,
+    pattern, setPattern,
+    activeStep, setActiveStep,
+    isSequencerPlaying: isPlaying,
+    setIsSequencerPlaying: setIsPlaying,
+    sequencerEngineRef: engineRef,
+  } = useMusicContext();
+
   const { getEngine } = useAudioEngine();
 
-  // Patrón de pasos — estado de React para re-render del grid
-  const [pattern,    setPattern]    = useState(() => createEmptyPattern());
-  // Paso activo actual — se actualiza en cada tick del engine
-  const [activeStep, setActiveStep] = useState(-1);
-
-  // Ref al engine — no causa re-render al actualizarse
-  const engineRef = useRef(null);
-
   // ── Inicialización del engine ──────────────────────────────────────────────
+  // El engine vive en un ref del contexto (no local) para que siga sonando
+  // aunque el componente Sequencer se desmonte al navegar a otro módulo.
 
   const getSequencerEngine = useCallback(() => {
     if (!engineRef.current) {
@@ -74,7 +75,7 @@ export function useSequencer() {
       };
     }
     return engineRef.current;
-  }, [getEngine, setIsPlaying]);
+  }, [engineRef, getEngine, setActiveStep, setIsPlaying]);
 
   // ── Sincronización BPM → engine ───────────────────────────────────────────
 
@@ -82,7 +83,7 @@ export function useSequencer() {
     if (engineRef.current) {
       engineRef.current.setBpm(bpm);
     }
-  }, [bpm]);
+  }, [engineRef, bpm]);
 
   // ── Sincronización pattern → engine ──────────────────────────────────────
 
@@ -90,17 +91,7 @@ export function useSequencer() {
     if (engineRef.current) {
       engineRef.current.setPattern(pattern);
     }
-  }, [pattern]);
-
-  // ── Cleanup al desmontar ──────────────────────────────────────────────────
-
-  useEffect(() => {
-    return () => {
-      if (engineRef.current && engineRef.current.isPlaying()) {
-        engineRef.current.stop();
-      }
-    };
-  }, []);
+  }, [engineRef, pattern]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 

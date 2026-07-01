@@ -9,7 +9,7 @@ import { useMusicContext } from './useMusicContext.js';
  * @param {boolean} active
  */
 export function useAnimatedBackground(type, active = true) {
-  const { rootNote, bpm, isPlaying } = useMusicContext();
+  const { rootNote, bpm, isSequencerPlaying, isProgressionPlaying } = useMusicContext();
   const ref = useRef(null);
 
   useEffect(() => {
@@ -22,5 +22,5 @@ export function useAnimatedBackground(type, active = true) {
     }
   }, [active]);
 
-  return { ref, rootNote, bpm, isPlaying };
+  return { ref, rootNote, bpm, isPlaying: isSequencerPlaying || isProgressionPlaying };
 }

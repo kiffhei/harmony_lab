@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NOTES, getScale, getDiatonic, getScaleNames } from '../../core/MusicTheory.js';
+import { createProgressionChord } from '../../core/ProgressionEngine.js';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
@@ -154,7 +155,12 @@ export default function KeyExplorer() {
     rootNote,    setRootNote,
     scaleName,   setScaleName,
     activeChord, setActiveChord,
+    setProgression,
   } = useMusicContext();
+
+  function handleAddToProgression(chord) {
+    setProgression((prev) => [...prev, createProgressionChord(chord)]);
+  }
 
   const scaleNotes = useMemo(() => getScale(rootNote, scaleName),    [rootNote, scaleName]);
   const diatonic   = useMemo(() => getDiatonic(rootNote, scaleName), [rootNote, scaleName]);
@@ -383,6 +389,18 @@ export default function KeyExplorer() {
                   <span className="key-degree-roman">{chord.roman}</span>
                   <span className="key-degree-chord">{chord.root}{suffix}</span>
                   <span className="key-degree-function">{harmFunc}</span>
+                  {isActive && (
+                    <button
+                      className="text-[var(--c-amber)] text-xs font-semibold hover:opacity-80 transition-opacity ml-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToProgression(chord);
+                      }}
+                      aria-label={`Agregar ${chord.root}${suffix} a la progresión`}
+                    >
+                      + Agregar a progresión
+                    </button>
+                  )}
                 </motion.div>
               );
             })}
