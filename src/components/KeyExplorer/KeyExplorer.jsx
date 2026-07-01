@@ -260,15 +260,8 @@ export default function KeyExplorer() {
               );
             })}
 
-            {/* Nodo central — spring animation al cambiar rootNote */}
-            <motion.g
-              key={rootNote}
-              transform={`translate(${COF_CENTER}, ${COF_CENTER})`}
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              style={{ originX: 0, originY: 0 }}
-            >
+            {/* Nodo central — solo la tónica activa */}
+            <g transform={`translate(${COF_CENTER}, ${COF_CENTER})`}>
               <circle
                 cx={0}
                 cy={0}
@@ -280,15 +273,12 @@ export default function KeyExplorer() {
                   strokeWidth: 1.5,
                 }}
               />
-              <text className="cof-center-text" textAnchor="middle">
-                <tspan x={0} dy="-4" fontSize="14" fontWeight="800">
+              <text className="cof-center-text" textAnchor="middle" dominantBaseline="central">
+                <tspan x={0} fontSize="16" fontWeight="800">
                   {rootNote}
                 </tspan>
-                <tspan x={0} dy="13" fontSize="9">
-                  {scaleName.length > 8 ? scaleName.slice(0, 8) : scaleName}
-                </tspan>
               </text>
-            </motion.g>
+            </g>
           </svg>
         </div>
       </div>
