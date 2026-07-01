@@ -3,7 +3,7 @@
  * Hook que conecta ProgressionEngine con React y MusicContext.
  */
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useMusicContext } from './useMusicContext.js';
 import { useAudioEngine } from './useAudioEngine.js';
 import {
@@ -19,16 +19,19 @@ import {
  * useProgressions — Hook principal del módulo Progressions.
  */
 export function useProgressions() {
-  const { bpm, setBpm, progression, setProgression } = useMusicContext();
+  const {
+    bpm, setBpm, progression, setProgression,
+    activeChordIndex: activeIndex, setActiveChordIndex: setActiveIndex,
+    isProgressionPlaying: isPlaying, setIsProgressionPlaying: setIsPlaying,
+    progressionLoop: loop, setProgressionLoop: setLoop,
+    progressionPlayerRef: playerRef,
+  } = useMusicContext();
+
   const { getEngine } = useAudioEngine();
 
-  const [isPlaying,    setIsPlaying]    = useState(false);
-  const [activeIndex,  setActiveIndex]  = useState(-1);
-  const [loop,         setLoop]         = useState(false);
-
-  const playerRef = useRef(null);
-
   // ── Player ────────────────────────────────────────────────────────────────
+  // El player vive en un ref del contexto (no local) para que siga sonando
+  // aunque el componente Progressions se desmonte al navegar a otro módulo.
 
   const getPlayer = useCallback(() => {
     if (!playerRef.current) {
@@ -40,13 +43,7 @@ export function useProgressions() {
       };
     }
     return playerRef.current;
-  }, [getEngine]);
-
-  useEffect(() => {
-    return () => {
-      if (playerRef.current?.isPlaying()) playerRef.current.stop();
-    };
-  }, []);
+  }, [playerRef, getEngine, setActiveIndex, setIsPlaying]);
 
   // ── Edición de progresión ─────────────────────────────────────────────────
 

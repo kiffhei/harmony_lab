@@ -5,6 +5,10 @@ import KeyExplorer from '../components/KeyExplorer/KeyExplorer.jsx';
 import Piano from '../components/Piano/Piano.jsx';
 import Guitar from '../components/Guitar/Guitar.jsx';
 import Progressions from '../components/Progressions/Progressions.jsx';
+import Sequencer from '../components/Sequencer/Sequencer.jsx';
+import PatternLibrary from '../components/PatternLibrary/PatternLibrary.jsx';
+import Tuner from '../components/Tuner/Tuner.jsx';
+import SongAnalyzer from '../components/SongAnalyzer/SongAnalyzer.jsx';
 
 const TABS = [
   { label: 'Armonía',      icon: '♩',  modules: ['Harmony Map', 'Key Explorer', 'Progressions'] },
@@ -43,9 +47,9 @@ function ModulePlaceholder({ name }) {
  * showSplash = true renders the home screen; false renders the active module placeholder.
  */
 export default function DesktopLayout() {
-  const [showSplash,   setShowSplash]   = useState(true);
-  const [activeTab,    setActiveTab]    = useState(0);
-  const [activeModule, setActiveModule] = useState('Harmony Map');
+  const [showSplash,    setShowSplash]    = useState(true);
+  const [activeTab,     setActiveTab]     = useState(0);
+  const [activeModule,  setActiveModule]  = useState('Harmony Map');
 
   function handleTabChange(idx) {
     setActiveTab(idx);
@@ -151,7 +155,15 @@ export default function DesktopLayout() {
                     ? <Piano />
                     : activeModule === 'Guitar'
                       ? <Guitar />
-                      : <ModulePlaceholder name={activeModule} />
+                      : activeModule === 'Sequencer'
+                        ? <Sequencer />
+                        : activeModule === 'Pattern Library'
+                          ? <PatternLibrary />
+                          : activeModule === 'Tuner'
+                            ? <Tuner />
+                            : activeModule === 'Song Analyzer'
+                              ? <SongAnalyzer />
+                              : <ModulePlaceholder name={activeModule} />
           }
         </div>
       </main>

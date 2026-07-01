@@ -50,6 +50,7 @@ export default function HarmonyMap() {
     commonProgressions,
     handleSelectChord,
     handleAddToProgression,
+    handleLoadProgression,
   } = useHarmonyMap();
 
   const { setProgression } = useMusicContext();
@@ -226,7 +227,7 @@ export default function HarmonyMap() {
               <button
                 key={prog.name}
                 className="harmony-prog-preset"
-                onClick={() => setProgression(prog.chords)}
+                onClick={() => handleLoadProgression(prog.chords)}
               >
                 <span className="preset-name">{prog.name}</span>
                 <span className="preset-chords">

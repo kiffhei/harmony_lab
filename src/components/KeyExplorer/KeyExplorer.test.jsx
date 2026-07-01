@@ -4,10 +4,19 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import KeyExplorer, { SCALE_MOOD } from './KeyExplorer.jsx';
 import { MusicProvider } from '../../context/MusicContext.jsx';
+import { useMusicContext } from '../../hooks/useMusicContext.js';
 import { getScaleNames } from '../../core/MusicTheory.js';
 
+let contextRef;
+
+function ContextProbe() {
+  contextRef = useMusicContext();
+  return null;
+}
+
 function renderWithProvider(ui) {
-  return render(<MusicProvider>{ui}</MusicProvider>);
+  contextRef = null;
+  return render(<MusicProvider>{ui}<ContextProbe /></MusicProvider>);
 }
 
 describe('KeyExplorer', () => {
@@ -85,6 +94,24 @@ describe('KeyExplorer', () => {
     const activeRows = Array.from(document.querySelectorAll('.key-degree-row.active'));
     expect(activeRows).toHaveLength(1);
     expect(activeRows[0].querySelector('.key-degree-roman').textContent).toBe('V');
+  });
+
+  it('el botón "+ Agregar a progresión" solo aparece en la fila activa', () => {
+    renderWithProvider(<KeyExplorer />);
+    expect(screen.queryByLabelText(/Agregar .* a la progresión/)).not.toBeInTheDocument();
+    const rows = document.querySelectorAll('.key-degree-row');
+    fireEvent.click(rows[4]); // V
+    expect(screen.getByLabelText(/Agregar .* a la progresión/)).toBeInTheDocument();
+  });
+
+  it('click en "+ Agregar a progresión" agrega el acorde activo a la progresión', () => {
+    renderWithProvider(<KeyExplorer />);
+    const rows = document.querySelectorAll('.key-degree-row');
+    fireEvent.click(rows[4]); // V — G en C Major
+    fireEvent.click(screen.getByLabelText(/Agregar .* a la progresión/));
+    expect(contextRef.progression).toHaveLength(1);
+    expect(contextRef.progression[0].roman).toBe('V');
+    expect(contextRef.progression[0].beats).toBe(4);
   });
 
   it('el SVG del círculo de quintas existe en el DOM', () => {
