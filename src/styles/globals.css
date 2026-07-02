@@ -541,6 +541,18 @@ body {
   color: var(--c-text-secondary);
 }
 
+/* Panel central de sub-navegación (260px) — colapsa junto con el sidebar
+   principal para maximizar el espacio del módulo activo. */
+.center-panel {
+  width: var(--panel-w);
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width var(--dur-normal) var(--ease-out);
+}
+.center-panel.collapsed {
+  width: 0;
+}
+
 .sidebar-nav-item:hover:not(.active) {
   color: var(--c-text-secondary);
   background: rgba(255, 255, 255, 0.04);

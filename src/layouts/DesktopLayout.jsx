@@ -138,8 +138,8 @@ export default function DesktopLayout() {
 
       </nav>
 
-      {/* ── Center panel — 260px sub-navigation ──────────────────────────── */}
-      <div className="w-[var(--panel-w)] shrink-0 bg-[var(--c-elevated)] border-r border-[var(--c-border)] overflow-y-auto flex flex-col">
+      {/* ── Center panel — 260px sub-navigation, colapsa junto con el sidebar ── */}
+      <div className={`center-panel${!sidebarExpanded ? ' collapsed' : ''} shrink-0 bg-[var(--c-elevated)] border-r border-[var(--c-border)] flex flex-col`}>
 
         {/* Panel header */}
         <div className="px-4 py-3 border-b border-[var(--c-border-subtle)] shrink-0">
