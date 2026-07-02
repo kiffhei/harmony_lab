@@ -84,6 +84,19 @@
 }
 .seq-bpm-value:hover { color: var(--c-amber-bright); }
 
+.sequencer-steps-input {
+  width: 48px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--c-amber);
+  background: var(--c-elevated);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: var(--s-1);
+  text-align: center;
+}
+
 .seq-bpm-label {
   font-family: var(--font-condensed);
   font-size: var(--text-2xs);
@@ -282,6 +295,21 @@
   background: var(--c-electric-cyan);
   border-color: transparent;
   box-shadow: 0 0 6px rgba(0,204,224,0.5), 0 0 14px rgba(0,204,224,0.2);
+}
+.seq-step.on-rimshot {
+  background: var(--c-red);
+  border-color: transparent;
+  box-shadow: var(--glow-red);
+}
+.seq-step.on-cowbell {
+  background: var(--c-hot-coral);
+  border-color: transparent;
+  box-shadow: 0 0 6px rgba(232,80,58,0.65), 0 0 14px rgba(232,80,58,0.25);
+}
+.seq-step.on-cymbal {
+  background: var(--c-deep-indigo);
+  border-color: transparent;
+  box-shadow: 0 0 6px rgba(42,32,168,0.65), 0 0 14px rgba(42,32,168,0.25);
 }
 
 /* Animación de encendido — spring via Framer Motion en el componente:

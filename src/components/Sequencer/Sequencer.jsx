@@ -3,22 +3,36 @@ import { useSequencer } from '../../hooks/useSequencer.js';
 import { useSessionTransport } from '../../hooks/useSessionTransport.js';
 import '../../styles/modules/sequencer.css';
 
-const INSTRUMENT_LABELS = ['KICK', 'SNARE', 'HH.C', 'HH.O', 'CLAP', 'TOM1', 'TOM2', 'SHKR'];
-const ON_CLASSES = ['on-kick', 'on-snare', 'on-hh-c', 'on-hh-o', 'on-clap', 'on-tom', 'on-tom', 'on-shaker'];
-const STEPS = Array.from({ length: 16 }, (_, i) => i);
+const INSTRUMENT_LABELS = [
+  'KICK', 'SNARE', 'HH.C', 'HH.O', 'CLAP',
+  'TOM.HI', 'TOM.MID', 'TOM.LO', 'SHKR',
+  'RIM', 'CWBL', 'CYM',
+];
+const ON_CLASSES = [
+  'on-kick', 'on-snare', 'on-hh-c', 'on-hh-o', 'on-clap',
+  'on-tom', 'on-tom', 'on-tom', 'on-shaker',
+  'on-rimshot', 'on-cowbell', 'on-cymbal',
+];
+
+const MIN_STEPS = 1;
+const MAX_STEPS = 64;
 
 export default function Sequencer() {
   const {
     pattern,
     activeStep,
     bpm,
+    stepCount,
     handleToggleStep,
     handleBpmChange,
     handleClear,
     handleLoadDefault,
+    handleStepCountChange,
   } = useSequencer();
 
   const { isSessionPlaying, toggleAll } = useSessionTransport();
+
+  const steps = Array.from({ length: stepCount }, (_, i) => i);
 
   return (
     <div className="sequencer-module">
@@ -41,6 +55,24 @@ export default function Sequencer() {
             />
           </div>
 
+          <div className="seq-bpm-display">
+            <span className="seq-bpm-label">STEPS</span>
+            <input
+              type="number"
+              min={MIN_STEPS}
+              max={MAX_STEPS}
+              value={stepCount}
+              className="sequencer-steps-input"
+              aria-label="Número de pasos"
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                if (Number.isFinite(next) && next >= MIN_STEPS && next <= MAX_STEPS) {
+                  handleStepCountChange(next);
+                }
+              }}
+            />
+          </div>
+
           <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto', alignItems: 'center' }}>
             <button className="sequencer-btn-util" onClick={handleLoadDefault}>Default</button>
             <button className="sequencer-btn-util" onClick={handleClear}>Clear</button>
@@ -60,7 +92,7 @@ export default function Sequencer() {
             <div key={INSTRUMENT_LABELS[instrIdx]} className="seq-track">
               <span className="seq-track-label">{INSTRUMENT_LABELS[instrIdx]}</span>
               <div className="seq-steps">
-                {STEPS.map((step) => {
+                {steps.map((step) => {
                   const isActive   = row[step];
                   const isCurrent  = activeStep === step;
                   const cls = [

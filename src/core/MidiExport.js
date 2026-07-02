@@ -8,8 +8,9 @@
  *   Drums:        Canal MIDI 9 (0x99 note_on, 0x89 note_off)
  *
  * GM Drum Map:
- *   kick=36, snare=38, hh_closed=42, hh_open=46,
- *   clap=39, tom1=48, tom2=47, shaker=69
+ *   kick=36, snare=38, hh_closed=42, hh_open=46, clap=39,
+ *   tom_hi=50, tom_mid=47, tom_lo=41, shaker=69,
+ *   rimshot=37, cowbell=56, cymbal=49
  */
 
 // ── Constantes MIDI ───────────────────────────────────────────────────────────
@@ -19,14 +20,18 @@ const DEFAULT_VELOCITY = 100;
 
 /** GM Drum map — nombre → nota MIDI */
 export const DRUM_MAP = {
-  kick:    36,
-  snare:   38,
-  hh_c:    42,
-  hh_o:    46,
-  clap:    39,
-  tom1:    48,
-  tom2:    47,
-  shaker:  69,
+  kick:     36,
+  snare:    38,
+  hh_c:     42,
+  hh_o:     46,
+  clap:     39,
+  tom_hi:   50,
+  tom_mid:  47,
+  tom_lo:   41,
+  shaker:   69,
+  rimshot:  37,
+  cowbell:  56,
+  cymbal:   49,
 };
 
 /** Map de nombres de notas a número MIDI */
@@ -153,7 +158,7 @@ export function buildDrumsBytes(pattern, bpm = 120) {
     throw new Error('El patrón de batería no puede estar vacío');
   }
 
-  const STEPS = 16;
+  const STEPS = Math.max(...Object.values(pattern).map((steps) => steps.length));
   const ticksPerStep = TICKS_PER_BEAT / 4;
   const events = [...tempoEvent(bpm)];
 

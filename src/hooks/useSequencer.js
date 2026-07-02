@@ -18,9 +18,9 @@ import {
   toggleStep,
   clearPattern,
   clearInstrument,
+  resizePattern,
   patternToMidiFormat,
   INSTRUMENTS,
-  STEP_COUNT,
 } from '../core/SequencerEngine.js';
 
 /**
@@ -39,6 +39,7 @@ import {
  *   handleClear: () => void,
  *   handleClearInstrument: (instrumentIdx: number) => void,
  *   handleLoadDefault: () => void,
+ *   handleStepCountChange: (newStepCount: number) => void,
  *   getMidiPattern: () => Object,
  * }}
  */
@@ -171,10 +172,19 @@ export function useSequencer() {
   }, []);
 
   /**
-   * Carga el patrón default.
+   * Carga el patrón default, respetando el número de pasos actual.
    */
   const handleLoadDefault = useCallback(() => {
-    setPattern(createDefaultPattern());
+    setPattern((prev) => createDefaultPattern(prev[0]?.length));
+  }, []);
+
+  /**
+   * Cambia el número de pasos del patrón, preservando los hits existentes
+   * en el rango que se mantiene.
+   * @param {number} newStepCount
+   */
+  const handleStepCountChange = useCallback((newStepCount) => {
+    setPattern((prev) => resizePattern(prev, newStepCount));
   }, []);
 
   /**
@@ -191,7 +201,7 @@ export function useSequencer() {
     isPlaying,
     bpm,
     instruments: INSTRUMENTS,
-    stepCount:   STEP_COUNT,
+    stepCount:   pattern[0]?.length ?? 16,
     handleToggleStep,
     handlePlay,
     handleStop,
@@ -200,6 +210,7 @@ export function useSequencer() {
     handleClear,
     handleClearInstrument,
     handleLoadDefault,
+    handleStepCountChange,
     getMidiPattern,
   };
 }

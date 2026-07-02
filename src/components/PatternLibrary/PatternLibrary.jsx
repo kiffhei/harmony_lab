@@ -1,79 +1,56 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
+import { patternFromHitCodes, INSTRUMENTS } from '../../core/SequencerEngine.js';
+import { DRUM_PATTERNS } from './drumPatternsData.js';
 import '../../styles/modules/pattern-library.css';
 
-// INSTRUMENTS order: kick=0 snare=1 hh_c=2 hn_o=3 clap=4 tom1=5 tom2=6 shaker=7
-const MINI_STEP_CLS = ['kick', 'snare', 'hh', 'hh', 'clap', 'tom', 'tom', ''];
+// Preview compacta — solo las filas más representativas (no las 12) para
+// mantener las 242 cards livianas de renderizar.
+const PREVIEW_INSTRUMENTS = ['kick', 'snare', 'hh_c', 'hh_o', 'clap', 'shaker'];
+const PREVIEW_STEP_CLS    = { kick: 'kick', snare: 'snare', hh_c: 'hh', hh_o: 'hh', clap: 'clap', shaker: 'shaker' };
 
-function makePattern(steps) {
-  const IDX = { kick: 0, snare: 1, hh_c: 2, hn_o: 3, clap: 4, tom1: 5, tom2: 6, shaker: 7 };
-  const p = Array.from({ length: 8 }, () => Array(16).fill(false));
-  Object.entries(steps).forEach(([inst, active]) => {
-    const i = IDX[inst];
-    if (i !== undefined) active.forEach((s) => { p[i][s] = true; });
-  });
-  return p;
-}
-
-const PRESET_PATTERNS = [
-  {
-    id: 'four-on-floor', name: '4 on the Floor', genre: 'House', bpm: 128,
-    pattern: makePattern({ kick: [0,4,8,12], hh_c: [0,2,4,6,8,10,12,14] }),
-  },
-  {
-    id: 'boom-bap', name: 'Boom Bap', genre: 'Hip-Hop', bpm: 90,
-    pattern: makePattern({ kick: [0,6,10], snare: [4,12], hh_c: [0,2,4,6,8,10,12,14] }),
-  },
-  {
-    id: 'trap-808', name: 'Trap 808', genre: 'Trap', bpm: 140,
-    pattern: makePattern({ kick: [0,3,6,9], snare: [4,12], hh_c: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }),
-  },
-  {
-    id: 'techno-basic', name: 'Techno Basic', genre: 'Techno', bpm: 135,
-    pattern: makePattern({ kick: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], hh_c: [0,4,8,12] }),
-  },
-  {
-    id: 'dnb-amen', name: 'Jungle Break', genre: 'Drum & Bass', bpm: 174,
-    pattern: makePattern({ kick: [0,2], snare: [4,14], hh_c: [0,2,4,6,8,10,12,14] }),
-  },
-  {
-    id: 'boom-clap', name: 'Boom Clap', genre: 'House', bpm: 122,
-    pattern: makePattern({ kick: [0,8], clap: [4,12], hh_c: [0,2,4,6,8,10,12,14] }),
-  },
+const STRIPE_CLASSES = [
+  'stripe-hiphop', 'stripe-house', 'stripe-reggae', 'stripe-jazz',
+  'stripe-dnb', 'stripe-techno', 'stripe-trap', 'stripe-latin',
+];
+const FILTER_CLASSES = [
+  'active-hiphop', 'active-house', 'active-reggae',
+  'active-jazz', 'active-dnb', 'active-techno',
 ];
 
-const GENRES = ['All', 'House', 'Hip-Hop', 'Trap', 'Techno', 'Drum & Bass'];
+// Géneros reales encontrados en la fuente, en el orden en que aparecen
+// (agrupación temática del libro, no alfabética).
+const GENRES = ['All', ...new Set(DRUM_PATTERNS.map((p) => p.genre))];
 
-const GENRE_FILTER_CLS = {
-  House:         'active-house',
-  'Hip-Hop':     'active-hiphop',
-  Trap:          'active-trap',
-  Techno:        'active-techno',
-  'Drum & Bass': 'active-dnb',
-};
+function genreClass(genre, palette) {
+  const idx = GENRES.indexOf(genre) - 1; // -1 porque GENRES[0] es 'All'
+  return palette[((idx % palette.length) + palette.length) % palette.length];
+}
 
-const GENRE_STRIPE_CLS = {
-  House:         'stripe-house',
-  'Hip-Hop':     'stripe-hiphop',
-  Trap:          'stripe-trap',
-  Techno:        'stripe-techno',
-  'Drum & Bass': 'stripe-dnb',
-};
+const PRESET_PATTERNS = DRUM_PATTERNS.map((p, i) => ({
+  id:      `${p.genre}-${i}`,
+  name:    p.name,
+  genre:   p.genre,
+  pattern: patternFromHitCodes(p.hits),
+}));
 
 function MiniGrid({ pattern }) {
   return (
     <div className="pattern-mini-grid">
-      {pattern.map((row, instrIdx) => (
-        <div key={instrIdx} className="pattern-mini-row">
-          {row.map((active, step) => (
-            <div
-              key={step}
-              className={`pattern-mini-step${active ? ` ${MINI_STEP_CLS[instrIdx]}` : ''}`}
-            />
-          ))}
-        </div>
-      ))}
+      {PREVIEW_INSTRUMENTS.map((name) => {
+        const row = pattern[INSTRUMENTS.indexOf(name)];
+        return (
+          <div key={name} className="pattern-mini-row">
+            {row.map((active, step) => (
+              <div
+                key={step}
+                className={`pattern-mini-step${active ? ` ${PREVIEW_STEP_CLS[name]}` : ''}`}
+              />
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -85,12 +62,15 @@ MiniGrid.propTypes = {
 export default function PatternLibrary() {
   const { setPattern } = useMusicContext();
 
-  const [activeGenre,  setActiveGenre]  = useState('All');
-  const [selectedId,   setSelectedId]   = useState(null);
+  const [activeGenre, setActiveGenre] = useState('All');
+  const [selectedId,  setSelectedId]  = useState(null);
 
-  const visible = activeGenre === 'All'
-    ? PRESET_PATTERNS
-    : PRESET_PATTERNS.filter((p) => p.genre === activeGenre);
+  const visible = useMemo(
+    () => activeGenre === 'All'
+      ? PRESET_PATTERNS
+      : PRESET_PATTERNS.filter((p) => p.genre === activeGenre),
+    [activeGenre],
+  );
 
   function handleLoad(preset) {
     setSelectedId(preset.id);
@@ -103,13 +83,13 @@ export default function PatternLibrary() {
       <div className="pattern-library-header">
         <div className="pattern-filters">
           {GENRES.map((g) => {
-            const isActive = activeGenre === g;
-            const activeCls = isActive && g !== 'All' ? ` ${GENRE_FILTER_CLS[g]}` : '';
-            const baseCls = isActive && g === 'All' ? ' active-all' : '';
+            const isActive  = activeGenre === g;
+            const activeCls = isActive && g !== 'All' ? ` ${genreClass(g, FILTER_CLASSES)}` : '';
+            const allCls    = isActive && g === 'All' ? ' active-all' : '';
             return (
               <button
                 key={g}
-                className={`pattern-filter-btn${activeCls}${baseCls}`}
+                className={`pattern-filter-btn${activeCls}${allCls}`}
                 onClick={() => setActiveGenre(g)}
                 aria-pressed={isActive}
               >
@@ -133,12 +113,9 @@ export default function PatternLibrary() {
               role="article"
               aria-label={preset.name}
             >
-              <div
-                className={`pattern-card-stripe ${GENRE_STRIPE_CLS[preset.genre] || ''}`}
-              />
+              <div className={`pattern-card-stripe ${genreClass(preset.genre, STRIPE_CLASSES)}`} />
               <div className="pattern-card-header">
                 <span className="pattern-card-genre">{preset.genre}</span>
-                <span className="pattern-card-bpm">{preset.bpm} BPM</span>
               </div>
               <p className="pattern-card-name">{preset.name}</p>
               <MiniGrid pattern={preset.pattern} />

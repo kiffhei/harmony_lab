@@ -9,9 +9,9 @@ import {
   INSTRUMENTS, STEP_COUNT, INSTRUMENT_COUNT,
   createEmptyPattern, createDefaultPattern,
   clonePattern, toggleStep, setStep,
-  clearInstrument, clearPattern,
+  clearInstrument, clearPattern, resizePattern,
   stepInterval, countActiveSteps, getActiveSteps,
-  patternToMidiFormat, patternFromMidiFormat,
+  patternToMidiFormat, patternFromMidiFormat, patternFromHitCodes,
   clampBpm, SequencerEngine,
 } from '../../core/SequencerEngine.js';
 
@@ -25,6 +25,9 @@ const mockAudio = {
   drumClap:    vi.fn(),
   drumTom:     vi.fn(),
   drumShaker:  vi.fn(),
+  drumRimshot: vi.fn(),
+  drumCowbell: vi.fn(),
+  drumCymbal:  vi.fn(),
 };
 
 beforeEach(() => {
@@ -39,22 +42,24 @@ afterEach(() => {
 // ── Constantes ────────────────────────────────────────────────────────────────
 
 describe('Constantes', () => {
-  it('INSTRUMENTS tiene 8 elementos', () => {
-    expect(INSTRUMENTS).toHaveLength(8);
+  it('INSTRUMENTS tiene 12 elementos', () => {
+    expect(INSTRUMENTS).toHaveLength(12);
   });
 
-  it('STEP_COUNT es 16', () => {
+  it('STEP_COUNT default es 16', () => {
     expect(STEP_COUNT).toBe(16);
   });
 
-  it('INSTRUMENT_COUNT es 8', () => {
-    expect(INSTRUMENT_COUNT).toBe(8);
+  it('INSTRUMENT_COUNT es 12', () => {
+    expect(INSTRUMENT_COUNT).toBe(12);
   });
 
-  it('INSTRUMENTS incluye kick, snare, hh_c', () => {
-    expect(INSTRUMENTS).toContain('kick');
-    expect(INSTRUMENTS).toContain('snare');
-    expect(INSTRUMENTS).toContain('hh_c');
+  it('INSTRUMENTS incluye los 12 instrumentos esperados', () => {
+    [
+      'kick', 'snare', 'hh_c', 'hh_o', 'clap',
+      'tom_hi', 'tom_mid', 'tom_lo', 'shaker',
+      'rimshot', 'cowbell', 'cymbal',
+    ].forEach((name) => expect(INSTRUMENTS).toContain(name));
   });
 });
 
@@ -76,6 +81,17 @@ describe('createEmptyPattern()', () => {
     const a = createEmptyPattern();
     const b = createEmptyPattern();
     expect(a).not.toBe(b);
+  });
+
+  it('acepta un número de pasos personalizado', () => {
+    const p = createEmptyPattern(24);
+    expect(p).toHaveLength(INSTRUMENT_COUNT);
+    p.forEach((row) => expect(row).toHaveLength(24));
+  });
+
+  it('funciona con un número de pasos menor a 16', () => {
+    const p = createEmptyPattern(8);
+    p.forEach((row) => expect(row).toHaveLength(8));
   });
 });
 
@@ -112,6 +128,13 @@ describe('createDefaultPattern()', () => {
 
   it('tiene pasos activos', () => {
     expect(countActiveSteps(createDefaultPattern())).toBeGreaterThan(0);
+  });
+
+  it('escala las posiciones del beat proporcionalmente a un stepCount distinto', () => {
+    const p = createDefaultPattern(32);
+    const kickIdx = INSTRUMENTS.indexOf('kick');
+    // A 32 pasos, los 4 beats caen en 0, 8, 16, 24 (steps/4 = 8)
+    [0, 8, 16, 24].forEach((step) => expect(p[kickIdx][step]).toBe(true));
   });
 });
 
@@ -231,6 +254,89 @@ describe('clearPattern()', () => {
     const p = createDefaultPattern();
     clearPattern(p);
     expect(countActiveSteps(p)).toBeGreaterThan(0);
+  });
+});
+
+// ── resizePattern ─────────────────────────────────────────────────────────────
+
+describe('resizePattern()', () => {
+  it('trunca pasos al reducir el tamaño, preservando los que quedan', () => {
+    let p = createEmptyPattern(16);
+    p = setStep(p, 0, 0, true);
+    p = setStep(p, 0, 15, true);
+    const resized = resizePattern(p, 8);
+    expect(resized[0]).toHaveLength(8);
+    expect(resized[0][0]).toBe(true);
+  });
+
+  it('rellena con false al aumentar el tamaño', () => {
+    let p = createEmptyPattern(8);
+    p = setStep(p, 0, 0, true);
+    const resized = resizePattern(p, 16);
+    expect(resized[0]).toHaveLength(16);
+    expect(resized[0][0]).toBe(true);
+    for (let i = 8; i < 16; i++) expect(resized[0][i]).toBe(false);
+  });
+
+  it('no muta el patrón original', () => {
+    const p = createEmptyPattern(16);
+    resizePattern(p, 8);
+    expect(p[0]).toHaveLength(16);
+  });
+
+  it('mantiene el número de filas de instrumentos', () => {
+    const p = createEmptyPattern(16);
+    const resized = resizePattern(p, 32);
+    expect(resized).toHaveLength(INSTRUMENT_COUNT);
+  });
+});
+
+// ── patternFromHitCodes ───────────────────────────────────────────────────────
+
+describe('patternFromHitCodes()', () => {
+  it('mapea códigos de instrumento a la fila correcta', () => {
+    const grid = patternFromHitCodes({ BD: [1, 7], SN: [5, 13] });
+    expect(grid[INSTRUMENTS.indexOf('kick')][0]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('kick')][6]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('snare')][4]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('snare')][12]).toBe(true);
+  });
+
+  it('los pasos son 1-indexados en la entrada, 0-indexados en el grid', () => {
+    const grid = patternFromHitCodes({ BD: [1] });
+    expect(grid[INSTRUMENTS.indexOf('kick')][0]).toBe(true);
+  });
+
+  it('mapea los 3 toms a filas distintas', () => {
+    const grid = patternFromHitCodes({ HT: [1], MT: [2], LT: [3] });
+    expect(grid[INSTRUMENTS.indexOf('tom_hi')][0]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('tom_mid')][1]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('tom_lo')][2]).toBe(true);
+  });
+
+  it('mapea rimshot, cowbell y cymbal', () => {
+    const grid = patternFromHitCodes({ RS: [1], CB: [2], CY: [3] });
+    expect(grid[INSTRUMENTS.indexOf('rimshot')][0]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('cowbell')][1]).toBe(true);
+    expect(grid[INSTRUMENTS.indexOf('cymbal')][2]).toBe(true);
+  });
+
+  it('HC se trata como alias de clap', () => {
+    const grid = patternFromHitCodes({ HC: [1] });
+    expect(grid[INSTRUMENTS.indexOf('clap')][0]).toBe(true);
+  });
+
+  it('respeta un stepCount personalizado', () => {
+    const grid = patternFromHitCodes({ BD: [1] }, 32);
+    expect(grid[0]).toHaveLength(32);
+  });
+
+  it('ignora códigos desconocidos sin lanzar error', () => {
+    expect(() => patternFromHitCodes({ XX: [1, 2] })).not.toThrow();
+  });
+
+  it('ignora pasos fuera de rango sin lanzar error', () => {
+    expect(() => patternFromHitCodes({ BD: [99] })).not.toThrow();
   });
 });
 
@@ -505,6 +611,16 @@ describe('SequencerEngine', () => {
         expect(s).toBeGreaterThanOrEqual(0);
         expect(s).toBeLessThan(STEP_COUNT);
       });
+    });
+
+    it('respeta un patrón con stepCount distinto de 16 (no excede su longitud)', () => {
+      const steps = [];
+      engine.onStep = (s) => steps.push(s);
+      engine.setPattern(createEmptyPattern(8));
+      engine.start();
+      vi.advanceTimersByTime(500);
+      engine.stop();
+      steps.forEach((s) => expect(s).toBeLessThan(8));
     });
   });
 });

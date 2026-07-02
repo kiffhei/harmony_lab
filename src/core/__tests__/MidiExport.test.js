@@ -77,9 +77,13 @@ describe('DRUM_MAP', () => {
   it('hh_c = 42', () => expect(DRUM_MAP.hh_c).toBe(42));
   it('hh_o = 46', () => expect(DRUM_MAP.hh_o).toBe(46));
   it('clap = 39', () => expect(DRUM_MAP.clap).toBe(39));
-  it('tom1 = 48', () => expect(DRUM_MAP.tom1).toBe(48));
-  it('tom2 = 47', () => expect(DRUM_MAP.tom2).toBe(47));
+  it('tom_hi = 50', () => expect(DRUM_MAP.tom_hi).toBe(50));
+  it('tom_mid = 47', () => expect(DRUM_MAP.tom_mid).toBe(47));
+  it('tom_lo = 41', () => expect(DRUM_MAP.tom_lo).toBe(41));
   it('shaker = 69', () => expect(DRUM_MAP.shaker).toBe(69));
+  it('rimshot = 37', () => expect(DRUM_MAP.rimshot).toBe(37));
+  it('cowbell = 56', () => expect(DRUM_MAP.cowbell).toBe(56));
+  it('cymbal = 49', () => expect(DRUM_MAP.cymbal).toBe(49));
 
   it('todos en rango MIDI 0-127', () => {
     Object.values(DRUM_MAP).forEach((n) => {
@@ -246,6 +250,20 @@ describe('buildDrumsBytes()', () => {
     const single = buildDrumsBytes({ kick: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] });
     const multi  = buildDrumsBytes(pattern);
     expect(multi.length).toBeGreaterThan(single.length);
+  });
+
+  it('funciona con un patrón de menos de 16 pasos', () => {
+    expect(() => buildDrumsBytes({ kick: [1,0,0,0,1,0,0,0] })).not.toThrow();
+  });
+
+  it('funciona con un patrón de más de 16 pasos', () => {
+    expect(() => buildDrumsBytes({ kick: Array(32).fill(0).map((_, i) => (i % 8 === 0 ? 1 : 0)) })).not.toThrow();
+  });
+
+  it('un patrón de 32 pasos genera más eventos que uno de 16 con los mismos hits', () => {
+    const p16 = { kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] };
+    const p32 = { kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] };
+    expect(buildDrumsBytes(p32).length).toBeGreaterThan(buildDrumsBytes(p16).length);
   });
 });
 

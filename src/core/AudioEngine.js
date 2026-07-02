@@ -257,6 +257,99 @@ export class AudioEngine {
   }
 
   /**
+   * Rimshot — noise corto + highpass agudo + un "tick" de definición.
+   */
+  drumRimshot() {
+    const ctx = this.getContext();
+    const now = ctx.currentTime;
+
+    const noise    = this._createNoise(0.06);
+    const highpass = ctx.createBiquadFilter();
+    const gainN    = ctx.createGain();
+
+    highpass.type            = 'highpass';
+    highpass.frequency.value = 2000;
+
+    gainN.gain.setValueAtTime(0.6, now);
+    gainN.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+    noise.connect(highpass);
+    highpass.connect(gainN);
+    gainN.connect(this._master);
+    noise.start(now);
+    noise.stop(now + 0.07);
+
+    // Tick — define el ataque metálico del aro
+    const tick     = ctx.createOscillator();
+    const gainTick = ctx.createGain();
+
+    tick.type = 'triangle';
+    tick.frequency.setValueAtTime(800, now);
+
+    gainTick.gain.setValueAtTime(0.4, now);
+    gainTick.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+    tick.connect(gainTick);
+    gainTick.connect(this._master);
+    tick.start(now);
+    tick.stop(now + 0.04);
+  }
+
+  /**
+   * Cowbell — dos osciladores cuadrados (tonos clásicos ~587Hz/845Hz)
+   * a través de un bandpass, decay corto.
+   */
+  drumCowbell() {
+    const ctx = this.getContext();
+    const now = ctx.currentTime;
+
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type            = 'bandpass';
+    bandpass.frequency.value = 800;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+    [587, 845].forEach((freq) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.connect(bandpass);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    });
+
+    bandpass.connect(gain);
+    gain.connect(this._master);
+  }
+
+  /**
+   * Cymbal (crash) — noise largo + highpass muy agudo, decay lento.
+   */
+  drumCymbal() {
+    const ctx = this.getContext();
+    const now = ctx.currentTime;
+    const dur = 1.5;
+
+    const noise    = this._createNoise(dur);
+    const highpass = ctx.createBiquadFilter();
+    const gain     = ctx.createGain();
+
+    highpass.type            = 'highpass';
+    highpass.frequency.value = 5000;
+
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+    noise.connect(highpass);
+    highpass.connect(gain);
+    gain.connect(this._master);
+    noise.start(now);
+    noise.stop(now + dur + 0.05);
+  }
+
+  /**
    * Shaker — noise + highpass 6000Hz, muy corto.
    */
   drumShaker() {

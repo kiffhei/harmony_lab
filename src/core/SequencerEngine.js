@@ -16,39 +16,100 @@
  */
 
 /** Instrumentos disponibles en el orden del grid */
-export const INSTRUMENTS = ['kick', 'snare', 'hh_c', 'hn_o', 'clap', 'tom1', 'tom2', 'shaker'];
+export const INSTRUMENTS = [
+  'kick', 'snare', 'hh_c', 'hh_o', 'clap',
+  'tom_hi', 'tom_mid', 'tom_lo', 'shaker',
+  'rimshot', 'cowbell', 'cymbal',
+];
 
-/** Número de pasos por patrón */
+/** Número de pasos default por patrón (configurable por patrón) */
 export const STEP_COUNT = 16;
 
 /** Número de instrumentos */
 export const INSTRUMENT_COUNT = INSTRUMENTS.length;
 
 /**
- * Crea un patrón vacío de 16 pasos × 8 instrumentos.
+ * Crea un patrón vacío de N pasos × INSTRUMENT_COUNT instrumentos.
+ * @param {number} [steps=STEP_COUNT]
  * @returns {boolean[][]} matriz [instrumento][paso]
  */
-export function createEmptyPattern() {
+export function createEmptyPattern(steps = STEP_COUNT) {
   return Array.from({ length: INSTRUMENT_COUNT }, () =>
-    Array(STEP_COUNT).fill(false)
+    Array(steps).fill(false)
   );
 }
 
 /**
- * Crea un patrón con preset básico de kick en los beats 1, 2, 3, 4.
+ * Crea un patrón con preset básico de kick en los 4 beats del compás.
+ * Las posiciones escalan proporcionalmente a `steps` (steps/4 por beat).
+ * @param {number} [steps=STEP_COUNT]
  * @returns {boolean[][]}
  */
-export function createDefaultPattern() {
-  const pattern = createEmptyPattern();
-  // Kick en beats 1, 2, 3, 4 (pasos 0, 4, 8, 12)
+export function createDefaultPattern(steps = STEP_COUNT) {
+  const pattern = createEmptyPattern(steps);
+  const beatStep = steps / 4;
+  const beats = [0, 1, 2, 3].map((i) => Math.round(i * beatStep));
+
   const kickIdx = INSTRUMENTS.indexOf('kick');
-  [0, 4, 8, 12].forEach((step) => { pattern[kickIdx][step] = true; });
-  // Snare en beats 2 y 4 (pasos 4 y 12)
+  beats.forEach((step) => { pattern[kickIdx][step] = true; });
+
   const snareIdx = INSTRUMENTS.indexOf('snare');
-  [4, 12].forEach((step) => { pattern[snareIdx][step] = true; });
-  // Hi-hat cerrado en todos los pasos pares
+  [beats[1], beats[3]].forEach((step) => { pattern[snareIdx][step] = true; });
+
   const hhIdx = INSTRUMENTS.indexOf('hh_c');
-  [0, 2, 4, 6, 8, 10, 12, 14].forEach((step) => { pattern[hhIdx][step] = true; });
+  for (let step = 0; step < steps; step += 2) {
+    pattern[hhIdx][step] = true;
+  }
+
+  return pattern;
+}
+
+/**
+ * Redimensiona un patrón a un nuevo número de pasos, preservando los
+ * hits existentes en el rango que se mantiene (trunca o rellena con false).
+ * @param {boolean[][]} pattern
+ * @param {number} newStepCount
+ * @returns {boolean[][]}
+ */
+export function resizePattern(pattern, newStepCount) {
+  return pattern.map((row) => {
+    const next = Array(newStepCount).fill(false);
+    for (let i = 0; i < Math.min(row.length, newStepCount); i++) {
+      next[i] = row[i];
+    }
+    return next;
+  });
+}
+
+/** Código de instrumento (notación de libros de patrones) → nombre del instrumento */
+const HIT_CODE_TO_INSTRUMENT = {
+  BD: 'kick', SN: 'snare', CH: 'hh_c', OH: 'hh_o',
+  CL: 'clap', HC: 'clap',
+  HT: 'tom_hi', MT: 'tom_mid', LT: 'tom_lo',
+  SH: 'shaker', RS: 'rimshot', CB: 'cowbell', CY: 'cymbal',
+};
+
+/**
+ * Convierte un mapa compacto de código de instrumento → pasos activos
+ * (1-indexado, como en la notación de libros de patrones) a la matriz
+ * boolean[INSTRUMENT_COUNT][stepCount] que consume el Sequencer.
+ * Códigos desconocidos o pasos fuera de rango se ignoran silenciosamente.
+ * @param {Object<string, number[]>} hits
+ * @param {number} [stepCount=STEP_COUNT]
+ * @returns {boolean[][]}
+ */
+export function patternFromHitCodes(hits, stepCount = STEP_COUNT) {
+  const pattern = createEmptyPattern(stepCount);
+  Object.entries(hits).forEach(([code, steps]) => {
+    const instrument = HIT_CODE_TO_INSTRUMENT[code];
+    if (!instrument) return;
+    const idx = INSTRUMENTS.indexOf(instrument);
+    steps.forEach((step) => {
+      if (step >= 1 && step <= stepCount) {
+        pattern[idx][step - 1] = true;
+      }
+    });
+  });
   return pattern;
 }
 
@@ -96,17 +157,17 @@ export function setStep(pattern, instrumentIdx, step, value) {
  */
 export function clearInstrument(pattern, instrumentIdx) {
   const next = clonePattern(pattern);
-  next[instrumentIdx] = Array(STEP_COUNT).fill(false);
+  next[instrumentIdx] = Array(pattern[instrumentIdx].length).fill(false);
   return next;
 }
 
 /**
- * Limpia el patrón completo (inmutable).
- * @param {boolean[][]} _pattern
+ * Limpia el patrón completo (inmutable), preservando su número de pasos.
+ * @param {boolean[][]} pattern
  * @returns {boolean[][]}
  */
-export function clearPattern(_pattern) {
-  return createEmptyPattern();
+export function clearPattern(pattern) {
+  return createEmptyPattern(pattern[0]?.length ?? STEP_COUNT);
 }
 
 /**
@@ -160,10 +221,11 @@ export function patternToMidiFormat(pattern) {
  * @returns {boolean[][]}
  */
 export function patternFromMidiFormat(midiPattern) {
+  const stepCount = Object.values(midiPattern)[0]?.length ?? STEP_COUNT;
   return INSTRUMENTS.map((name) =>
     midiPattern[name]
       ? [...midiPattern[name]]
-      : Array(STEP_COUNT).fill(false)
+      : Array(stepCount).fill(false)
   );
 }
 
@@ -300,9 +362,12 @@ export class SequencerEngine {
         if (this.onStep) this.onStep(step);
       }, Math.max(0, (this._nextStepTime - now) * 1000));
 
-      // Avanzar al siguiente paso
+      // Avanzar al siguiente paso — el módulo respeta el stepCount real
+      // del patrón cargado (no un STEP_COUNT fijo), para soportar patrones
+      // de cualquier longitud.
+      const stepCount = this._pattern[0]?.length || STEP_COUNT;
       this._nextStepTime += stepInterval(this._bpm);
-      this._currentStep = (this._currentStep + 1) % STEP_COUNT;
+      this._currentStep = (this._currentStep + 1) % stepCount;
     }
   }
 
@@ -336,14 +401,18 @@ export class SequencerEngine {
     setTimeout(() => {
       if (!this._isPlaying) return;
       switch (instrument) {
-        case 'kick':    this._audio.drumKick();       break;
-        case 'snare':   this._audio.drumSnare();      break;
-        case 'hh_c':    this._audio.drumHiHat(false); break;
-        case 'hh_o':    this._audio.drumHiHat(true);  break;
-        case 'clap':    this._audio.drumClap();       break;
-        case 'tom1':    this._audio.drumTom(220);     break;
-        case 'tom2':    this._audio.drumTom(180);     break;
-        case 'shaker':  this._audio.drumShaker();     break;
+        case 'kick':     this._audio.drumKick();       break;
+        case 'snare':    this._audio.drumSnare();      break;
+        case 'hh_c':     this._audio.drumHiHat(false); break;
+        case 'hh_o':     this._audio.drumHiHat(true);  break;
+        case 'clap':     this._audio.drumClap();       break;
+        case 'tom_hi':   this._audio.drumTom(220);     break;
+        case 'tom_mid':  this._audio.drumTom(180);     break;
+        case 'tom_lo':   this._audio.drumTom(140);     break;
+        case 'shaker':   this._audio.drumShaker();     break;
+        case 'rimshot':  this._audio.drumRimshot();    break;
+        case 'cowbell':  this._audio.drumCowbell();    break;
+        case 'cymbal':   this._audio.drumCymbal();     break;
       }
     }, delay);
   }

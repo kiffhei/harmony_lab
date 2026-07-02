@@ -250,6 +250,59 @@ describe('AudioEngine', () => {
     });
   });
 
+  describe('drumRimshot()', () => {
+    it('ejecuta sin errores', () => {
+      const engine = new AudioEngine();
+      expect(() => engine.drumRimshot()).not.toThrow();
+    });
+
+    it('crea un buffer de noise y un oscilador de "tick"', () => {
+      const engine = new AudioEngine();
+      engine.drumRimshot();
+      expect(mockContext.createBufferSource).toHaveBeenCalled();
+      expect(mockContext.createOscillator).toHaveBeenCalled();
+    });
+
+    it('crea filtro highpass', () => {
+      const engine = new AudioEngine();
+      engine.drumRimshot();
+      expect(mockContext.createBiquadFilter).toHaveBeenCalled();
+    });
+  });
+
+  describe('drumCowbell()', () => {
+    it('ejecuta sin errores', () => {
+      const engine = new AudioEngine();
+      expect(() => engine.drumCowbell()).not.toThrow();
+    });
+
+    it('crea dos osciladores (tonos clásicos de cowbell)', () => {
+      const engine = new AudioEngine();
+      engine.drumCowbell();
+      expect(mockContext.createOscillator).toHaveBeenCalledTimes(2);
+    });
+
+    it('crea filtro bandpass', () => {
+      const engine = new AudioEngine();
+      engine.drumCowbell();
+      expect(mockContext.createBiquadFilter).toHaveBeenCalled();
+    });
+  });
+
+  describe('drumCymbal()', () => {
+    it('ejecuta sin errores', () => {
+      const engine = new AudioEngine();
+      expect(() => engine.drumCymbal()).not.toThrow();
+    });
+
+    it('crea buffer de noise y filtro highpass', () => {
+      const engine = new AudioEngine();
+      engine.drumCymbal();
+      expect(mockContext.createBufferSource).toHaveBeenCalled();
+      expect(mockContext.createBiquadFilter).toHaveBeenCalled();
+    });
+  });
+
   describe('setMasterVolume()', () => {
     it('actualiza _volume', () => {
       const engine = new AudioEngine();

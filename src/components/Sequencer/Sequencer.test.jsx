@@ -3,24 +3,31 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Sequencer from './Sequencer.jsx';
 
-const mockHandleToggleStep   = vi.fn();
-const mockHandleBpmChange    = vi.fn();
-const mockHandleClear        = vi.fn();
-const mockHandleLoadDefault  = vi.fn();
-const mockToggleAll          = vi.fn();
+const mockHandleToggleStep      = vi.fn();
+const mockHandleBpmChange       = vi.fn();
+const mockHandleClear           = vi.fn();
+const mockHandleLoadDefault     = vi.fn();
+const mockHandleStepCountChange = vi.fn();
+const mockToggleAll             = vi.fn();
 
-const createPattern = (active = false) =>
-  Array.from({ length: 8 }, () => Array(16).fill(active));
+const INSTRUMENT_COUNT = 12;
+
+const createPattern = (steps = 16, active = false) =>
+  Array.from({ length: INSTRUMENT_COUNT }, () => Array(steps).fill(active));
+
+let mockStepCount = 16;
 
 vi.mock('../../hooks/useSequencer.js', () => ({
   useSequencer: () => ({
-    pattern:           createPattern(false),
-    activeStep:        -1,
-    bpm:               120,
-    handleToggleStep:  mockHandleToggleStep,
-    handleBpmChange:   mockHandleBpmChange,
-    handleClear:       mockHandleClear,
-    handleLoadDefault: mockHandleLoadDefault,
+    pattern:                createPattern(mockStepCount, false),
+    activeStep:             -1,
+    bpm:                    120,
+    stepCount:              mockStepCount,
+    handleToggleStep:       mockHandleToggleStep,
+    handleBpmChange:        mockHandleBpmChange,
+    handleClear:            mockHandleClear,
+    handleLoadDefault:      mockHandleLoadDefault,
+    handleStepCountChange:  mockHandleStepCountChange,
   }),
 }));
 
@@ -31,7 +38,10 @@ vi.mock('../../hooks/useSessionTransport.js', () => ({
   }),
 }));
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockStepCount = 16;
+});
 
 describe('Sequencer', () => {
   it('renders without errors', () => {
@@ -44,22 +54,39 @@ describe('Sequencer', () => {
     expect(container.querySelector('.sequencer-faceplate')).toBeInTheDocument();
   });
 
-  it('renders 8 instrument track rows', () => {
+  it('renders 12 instrument track rows', () => {
     const { container } = render(<Sequencer />);
     const rows = container.querySelectorAll('.seq-track');
-    expect(rows).toHaveLength(8);
+    expect(rows).toHaveLength(INSTRUMENT_COUNT);
   });
 
-  it('renders 128 step buttons (8 × 16)', () => {
+  it('renders 192 step buttons (12 × 16) by default', () => {
     const { container } = render(<Sequencer />);
     const steps = container.querySelectorAll('.seq-step');
-    expect(steps).toHaveLength(128);
+    expect(steps).toHaveLength(INSTRUMENT_COUNT * 16);
   });
 
-  it('renders 8 instrument labels', () => {
+  it('renders 12 instrument labels', () => {
     const { container } = render(<Sequencer />);
     const labels = container.querySelectorAll('.seq-track-label');
-    expect(labels).toHaveLength(8);
+    expect(labels).toHaveLength(INSTRUMENT_COUNT);
+  });
+
+  it('renders the new instrument labels (toms, rimshot, cowbell, cymbal)', () => {
+    render(<Sequencer />);
+    expect(screen.getByText('TOM.HI')).toBeInTheDocument();
+    expect(screen.getByText('TOM.MID')).toBeInTheDocument();
+    expect(screen.getByText('TOM.LO')).toBeInTheDocument();
+    expect(screen.getByText('RIM')).toBeInTheDocument();
+    expect(screen.getByText('CWBL')).toBeInTheDocument();
+    expect(screen.getByText('CYM')).toBeInTheDocument();
+  });
+
+  it('renders the grid with a different step count when pattern is resized', () => {
+    mockStepCount = 24;
+    const { container } = render(<Sequencer />);
+    const rows = container.querySelectorAll('.seq-track');
+    expect(rows[0].querySelectorAll('.seq-step')).toHaveLength(24);
   });
 
   it('play button renders with play icon when not playing', () => {
@@ -99,6 +126,19 @@ describe('Sequencer', () => {
   it('BPM value is displayed', () => {
     render(<Sequencer />);
     expect(screen.getByText('120')).toBeInTheDocument();
+  });
+
+  it('steps input is displayed with current step count', () => {
+    render(<Sequencer />);
+    const input = screen.getByLabelText('Número de pasos');
+    expect(input.value).toBe('16');
+  });
+
+  it('changing steps input calls handleStepCountChange', () => {
+    render(<Sequencer />);
+    const input = screen.getByLabelText('Número de pasos');
+    fireEvent.change(input, { target: { value: '32' } });
+    expect(mockHandleStepCountChange).toHaveBeenCalledWith(32);
   });
 
   it('Clear button calls handleClear', () => {

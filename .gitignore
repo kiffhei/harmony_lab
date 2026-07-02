@@ -38,6 +38,10 @@ vite.config.js.timestamp*
 *.tar.gz
 *.zip
 
+# Third-party pattern reference books (copyrighted source material —
+# only the derived numeric pattern data is committed, not the PDFs)
+pattern_books/
+
 # Claude Code interno
 .claude/
 CLAUDE.internal.md
