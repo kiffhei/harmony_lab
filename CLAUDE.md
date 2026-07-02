@@ -537,7 +537,8 @@ La URL vigente vive únicamente en el secret `EASYPANEL_WEBHOOK_URL` de GitHub A
 ## Estado al cierre de sesión — 2026-07-01 · Post-auditoría
 
 Rama de trabajo: `audit/portfolio-readiness` (mergeada a `main`). Commits de la sesión:
-`a007eb1`, `c53a8d6`, `d39dba2`, `cec7cb4`, `f29147e`.
+`a007eb1`, `c53a8d6`, `d39dba2`, `cec7cb4`, `f29147e`, `7b27f3e`, `5b8c503`, `3edaf77`,
+`9077e28`, `ded6011`.
 
 ### Etapa 1 — Bugs P0 del audit + sesión unificada
 - Fix B-6 (test flaky de SongAnalyzer) y B-2 (PatternLibrary → Sequencer desconectado,
@@ -573,13 +574,41 @@ Rama de trabajo: `audit/portfolio-readiness` (mergeada a `main`). Commits de la 
 - Número de pasos ya no fijo en 16 — control numérico junto al BPM (1-64), redimensiona
   preservando los hits existentes (`resizePattern()`)
 
+### Seguridad — limpieza de docs
+- Se encontró el webhook de EasyPanel (ya rotado, pero en texto plano) expuesto también en
+  `AUDIT.md`, `PLAN.md`, `DEV_TASKS.md`, `PROMPT_KICKOFF.md` y en el propio `AUDIT_REPORT.md`
+  de esta sesión (el reporte de seguridad reproducía la vulnerabilidad que describía) —
+  redactado en los 5 archivos trackeados, más `CLAUDE.internal.md` (local, gitignoreado)
+
+### Song Analyzer oculto de la navegación
+- El usuario pidió dejarlo como "fantasma": sigue implementado y referenciado (import +
+  rama del ternario en `DesktopLayout.jsx`, componente y tests intactos) pero ya no aparece
+  ni en Splash ni en el panel de Herramientas — esa pestaña cae directo en Tuner. Motivo:
+  una feature simulada visible junto a herramientas reales le resta credibilidad a todas.
+  Reactivar agregando `'Song Analyzer'` de vuelta a `TABS` (DesktopLayout.jsx) y `MODULES`
+  (Splash.jsx) el día que tenga detección real
+
+### Key Explorer — orden y feedback de audio
+- Key Explorer pasó a ser el primer módulo de Armonía (antes Harmony Map) — es donde se
+  elige la tonalidad de trabajo, tiene más sentido como punto de entrada
+- Ninguna selección de tono reproducía audio (nodos del círculo, selects, filas de grado).
+  Ahora: click en nodo o cambiar tónica reproduce esa nota; cambiar escala reproduce el
+  acorde tónico de la nueva escala; click en fila de grado reproduce ese acorde
+
+### Navegación colapsable
+- Sidebar principal (64px) y panel de sub-navegación (260px) comparten un solo estado:
+  arrancan expandidos, se repliegan solos a los 4s, y un botón `«`/`»` al final del sidebar
+  los expande/retrae manualmente en cualquier momento. Detalle de diseño en `DESIGNER.md`
+  sección "Navegación colapsable"
+
 ### Estado de tests y deploy
-- 627 tests pasando (18 suites), build limpio, verificado end-to-end en navegador real
+- 632 tests pasando (18 suites), build limpio, verificado end-to-end en navegador real
   (Playwright headless) en cada etapa antes de commitear
 - Deploy a producción confirmado funcionando (ver sección "Resuelto" arriba)
 
 ### Pendiente real para portafolio 100% listo
-- SongAnalyzer: implementar detección real de BPM/tonalidad (sigue simulado)
+- SongAnalyzer: implementar detección real de BPM/tonalidad (sigue simulado y oculto)
 - Responsive (Tablet/Mobile), backgrounds animados, microinteracciones — fuera de
   alcance de esta sesión, no iniciados
 - Limpieza menor listada en "Pendiente — actualizado 2026-07-01" arriba
+- Sesión cerrada — retomar desde aquí en la próxima sesión

@@ -636,6 +636,30 @@ en vez de diseñar 22 combinaciones nuevas. Si en una sesión de diseño futura 
 identidad de color única por género, esto es lo primero a reemplazar
 (`genreClass()` en `PatternLibrary.jsx`).
 
+#### Navegación colapsable — sidebar principal + panel de sub-navegación
+
+Pedido explícito del usuario al final de la sesión: la barra lateral principal (64px, iconos)
+y el panel de sub-navegación (260px, lista de módulos por tab) ocupaban espacio fijo todo el
+tiempo. Ahora ambos comparten un solo estado `sidebarExpanded` en `DesktopLayout.jsx`:
+
+- **Al entrar a la app o al abrir manualmente:** el sidebar se expande a `--sidebar-w-expanded`
+  (180px, nuevo token — icono + label en fila) y el panel de 260px se muestra completo.
+- **Auto-repliegue:** a los 4000ms (`SIDEBAR_AUTO_COLLAPSE_MS`) ambos vuelven a su estado
+  mínimo — sidebar a `--sidebar-w` (64px, solo iconos) y panel a `0px` (oculto, no solo
+  angosto — no hay una versión "icon-only" con sentido para una lista de nombres de módulo).
+- **Botón toggle** (`«` / `»`) al final del sidebar (después de un spacer `flex-1` que lo
+  empuja hasta abajo): expande o retrae ambos manualmente en cualquier momento. Expandir
+  reinicia el timer de auto-repliegue.
+- Transición vía CSS (`width` + `--dur-normal`/`--ease-out`, mismo timing que el resto del
+  sistema) — no Framer Motion, para mantener el ancho sincronizado entre los dos elementos
+  sin depender de dos animaciones independientes desincronizándose.
+
+Implicación de diseño a tener en cuenta a futuro: con el panel colapsado, cambiar de **módulo**
+dentro de una misma tab (ej. de Key Explorer a Harmony Map) requiere expandir primero — cambiar
+de **tab** no, los iconos del sidebar siguen visibles siempre. Si en el futuro se quiere cambiar
+de módulo sin expandir, se necesitaría un mecanismo alterno (ej. atajos de teclado o scroll
+horizontal), no contemplado en esta sesión.
+
 #### Pendiente de diseño sin tocar esta sesión
 Los dos issues de layout de la sección anterior (KeyExplorer overflow en viewports bajos,
 HarmonyMap elipse aplastada en viewports anchos) **no se re-verificaron ni se tocaron** en
