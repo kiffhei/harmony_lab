@@ -1,8 +1,9 @@
 import React, { useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NOTES, getScale, getDiatonic, getScaleNames } from '../../core/MusicTheory.js';
+import { NOTES, getScale, getDiatonic, getScaleNames, noteFreq } from '../../core/MusicTheory.js';
 import { createProgressionChord } from '../../core/ProgressionEngine.js';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
+import { useAudioEngine } from '../../hooks/useAudioEngine.js';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -158,8 +159,36 @@ export default function KeyExplorer() {
     setProgression,
   } = useMusicContext();
 
+  const { playTone, playChord } = useAudioEngine();
+
   function handleAddToProgression(chord) {
     setProgression((prev) => [...prev, createProgressionChord(chord)]);
+  }
+
+  /** Cambia la tónica y reproduce su tono para poder elegir de oído. */
+  function handleRootChange(note) {
+    setRootNote(note);
+    playTone(noteFreq(note, 4), 0.5, 'triangle', 0.5);
+  }
+
+  /** Cambia la escala y reproduce el acorde tónico de la nueva escala. */
+  function handleScaleChange(newScaleName) {
+    setScaleName(newScaleName);
+    const newDiatonic = getDiatonic(rootNote, newScaleName);
+    if (newDiatonic[0]) {
+      playChord(newDiatonic[0].notes, 4);
+    }
+  }
+
+  /** Selecciona un grado de la escala y reproduce su acorde. */
+  function handleSelectChord(chord) {
+    setActiveChord({
+      root:    chord.root,
+      quality: chord.quality,
+      roman:   chord.roman,
+      notes:   chord.notes,
+    });
+    playChord(chord.notes, 4);
   }
 
   const scaleNotes  = useMemo(() => getScale(rootNote, scaleName),    [rootNote, scaleName]);
@@ -242,7 +271,7 @@ export default function KeyExplorer() {
                 <g
                   key={note}
                   className={nodeClass}
-                  onClick={() => setRootNote(note)}
+                  onClick={() => handleRootChange(note)}
                   data-testid={`cof-node-${note}`}
                   role="button"
                   aria-label={`Set root note to ${note}`}
@@ -303,7 +332,7 @@ export default function KeyExplorer() {
               className="select w-full"
               value={rootNote}
               aria-label="Root note"
-              onChange={(e) => setRootNote(e.target.value)}
+              onChange={(e) => handleRootChange(e.target.value)}
             >
               {NOTES.map((note) => (
                 <option key={note} value={note}>{note}</option>
@@ -324,7 +353,7 @@ export default function KeyExplorer() {
               className="select w-full"
               value={scaleName}
               aria-label="Scale"
-              onChange={(e) => setScaleName(e.target.value)}
+              onChange={(e) => handleScaleChange(e.target.value)}
             >
               {scaleNames.map((name) => (
                 <option key={name} value={name}>{name}</option>
@@ -343,7 +372,7 @@ export default function KeyExplorer() {
               <motion.button
                 key={`chip-${chord.root}-${index}`}
                 className={`key-note-chip${chord.root === rootNote ? ' active' : ''}`}
-                onClick={() => setRootNote(chord.root)}
+                onClick={() => handleRootChange(chord.root)}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.04 }}
@@ -368,12 +397,7 @@ export default function KeyExplorer() {
                   key={`row-${chord.root}-${index}`}
                   className={`key-degree-row${isActive ? ' active' : ''}`}
                   role="button"
-                  onClick={() => setActiveChord({
-                    root:    chord.root,
-                    quality: chord.quality,
-                    roman:   chord.roman,
-                    notes:   chord.notes,
-                  })}
+                  onClick={() => handleSelectChord(chord)}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}

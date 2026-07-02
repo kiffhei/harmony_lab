@@ -2,8 +2,8 @@ import React from 'react';
 
 /** @type {{ name: string, icon: string, desc: string, tab: number }[]} */
 const MODULES = [
-  { name: 'Harmony Map',     icon: '♾',  desc: 'Acordes diatónicos',      tab: 0 },
   { name: 'Key Explorer',    icon: '🗝',  desc: 'Tonalidades y escalas',   tab: 0 },
+  { name: 'Harmony Map',     icon: '♾',  desc: 'Acordes diatónicos',      tab: 0 },
   { name: 'Progressions',    icon: '♩',  desc: 'Editor de progresiones',  tab: 0 },
   { name: 'Piano',           icon: '🎹', desc: 'Teclado interactivo',      tab: 1 },
   { name: 'Guitar',          icon: '🎸', desc: 'Diapasón y escalas',       tab: 1 },

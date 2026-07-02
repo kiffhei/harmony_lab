@@ -1,11 +1,24 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import KeyExplorer, { SCALE_MOOD } from './KeyExplorer.jsx';
 import { MusicProvider } from '../../context/MusicContext.jsx';
 import { useMusicContext } from '../../hooks/useMusicContext.js';
 import { getScaleNames } from '../../core/MusicTheory.js';
+
+const mockPlayTone  = vi.fn();
+const mockPlayChord = vi.fn();
+
+vi.mock('../../hooks/useAudioEngine.js', () => ({
+  useAudioEngine: () => ({
+    playTone:  mockPlayTone,
+    playChord: mockPlayChord,
+    getEngine: vi.fn(),
+  }),
+}));
+
+beforeEach(() => vi.clearAllMocks());
 
 let contextRef;
 
@@ -125,6 +138,38 @@ describe('KeyExplorer', () => {
     fireEvent.click(gNode);
     const rootSelect = screen.getByLabelText('Root note');
     expect(rootSelect.value).toBe('G');
+  });
+
+  it('click en un nodo del SVG reproduce el tono de esa nota', () => {
+    renderWithProvider(<KeyExplorer />);
+    fireEvent.click(screen.getByTestId('cof-node-G'));
+    expect(mockPlayTone).toHaveBeenCalledTimes(1);
+  });
+
+  it('cambiar el select de root reproduce el tono de la nueva tónica', () => {
+    renderWithProvider(<KeyExplorer />);
+    fireEvent.change(screen.getByLabelText('Root note'), { target: { value: 'G' } });
+    expect(mockPlayTone).toHaveBeenCalledTimes(1);
+  });
+
+  it('cambiar el select de scale reproduce el acorde tónico de la nueva escala', () => {
+    renderWithProvider(<KeyExplorer />);
+    fireEvent.change(screen.getByLabelText('Scale'), { target: { value: 'Minor' } });
+    expect(mockPlayChord).toHaveBeenCalledTimes(1);
+  });
+
+  it('click en una fila de grado reproduce el acorde de ese grado', () => {
+    renderWithProvider(<KeyExplorer />);
+    const rows = document.querySelectorAll('.key-degree-row');
+    fireEvent.click(rows[4]); // V
+    expect(mockPlayChord).toHaveBeenCalledTimes(1);
+  });
+
+  it('click en una chip de nota reproduce el tono de esa tónica', () => {
+    renderWithProvider(<KeyExplorer />);
+    const chips = document.querySelectorAll('.key-note-chip');
+    fireEvent.click(chips[1]);
+    expect(mockPlayTone).toHaveBeenCalledTimes(1);
   });
 
   it('el nodo central muestra el rootNote activo', () => {

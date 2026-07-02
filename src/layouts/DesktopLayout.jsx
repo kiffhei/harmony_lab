@@ -11,7 +11,7 @@ import Tuner from '../components/Tuner/Tuner.jsx';
 import SongAnalyzer from '../components/SongAnalyzer/SongAnalyzer.jsx';
 
 const TABS = [
-  { label: 'Armonía',      icon: '♩',  modules: ['Harmony Map', 'Key Explorer', 'Progressions'] },
+  { label: 'Armonía',      icon: '♩',  modules: ['Key Explorer', 'Harmony Map', 'Progressions'] },
   { label: 'Instrumentos', icon: '🎹', modules: ['Piano', 'Guitar'] },
   { label: 'Ritmo',        icon: '🥁', modules: ['Sequencer', 'Pattern Library'] },
   { label: 'Herramientas', icon: '🔧', modules: ['Tuner', 'Song Analyzer'] },
@@ -49,7 +49,7 @@ function ModulePlaceholder({ name }) {
 export default function DesktopLayout() {
   const [showSplash,    setShowSplash]    = useState(true);
   const [activeTab,     setActiveTab]     = useState(0);
-  const [activeModule,  setActiveModule]  = useState('Harmony Map');
+  const [activeModule,  setActiveModule]  = useState('Key Explorer');
 
   function handleTabChange(idx) {
     setActiveTab(idx);
