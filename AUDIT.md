@@ -28,7 +28,7 @@
 **BLOQUEANTE:**
 - **Webhook URL de EasyPanel en texto plano en CLAUDE.md público.** En la sección "Bug activo" del CLAUDE.md commiteado:
   ```
-  http://89.116.167.180:3000/api/deploy/8783735a2ab991b4b131b9a3570d34503eed3d11836f7669
+  [URL rotada — almacenada solo en GitHub Secret EASYPANEL_WEBHOOK_URL]
   ```
   Cualquier persona con acceso al repo puede hacer un POST a esa URL y triggerear un deploy de producción. Esto es una exposición de infraestructura en un repo público.
 

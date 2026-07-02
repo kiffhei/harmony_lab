@@ -507,54 +507,79 @@ Rama main siempre deployable.
 - Click en card del Splash → navega directo al módulo correcto
 - `npm run build` ✅ — 0 errores, 0 warnings
 
-### Pendiente — Semana 2 (continuación)
-- Componentes UI de módulos (HarmonyMap, Piano, Guitar, KeyExplorer, Progressions)
-- Semana 3: Sequencer, PatternLibrary
-- Semana 4: Tuner, SongAnalyzer, backgrounds animados, Framer Motion
-- Semana 5: TabletLayout, MobileLayout, CI/CD, deploy EasyPanel
+### Pendiente — actualizado 2026-07-01
+- ✅ Piano, Guitar, Progressions, Sequencer, PatternLibrary, Tuner, SongAnalyzer — completos
+- SongAnalyzer: análisis de BPM/tonalidad sigue simulado — pendiente detección real
+- Semana 5: TabletLayout, MobileLayout — fuera de alcance por ahora (desktop-first)
+- Backgrounds animados (`ParticlesBeat`, `FrequencyWave`, `GridPulse`) y microinteracciones — no implementados
+- Limpieza menor: PropTypes en Piano/Guitar/Sequencer/SongAnalyzer/Tuner, test de Splash,
+  `public/og-image.png`, cobertura de Vitest ampliada a `components/`
 
 ---
 
-## 🚨 Bug activo — EasyPanel "Service is not reachable"
+## ✅ Resuelto — EasyPanel "Service is not reachable"
 
-### Fecha: 2026-06-09
-### Estado: BUILD ✅ — PROXY ❌
+**Bug original:** 2026-06-09. **Resuelto:** confirmado en sesión del 2026-07-01 —
+la URL de producción responde HTTP 200 y sirve el build correcto (verificado con curl
+y con el usuario confirmando visualmente los módulos Sequencer/PatternLibrary/Tuner/
+SongAnalyzer cargando en `https://clawdbot-harmony-lab.u555aa.easypanel.host/`).
+No se identificó cuál de las causas candidatas (nombre de contenedor, server.js,
+`type: module`, `npm ci --omit=dev`) fue la que se corrigió — probablemente se resolvió
+junto con un redeploy posterior. Si reaparece, las hipótesis de la sección original
+(antes de esta actualización) siguen siendo el punto de partida para diagnosticar.
 
-### Qué se hizo
-1. Se confirmó que el código fuente está 100% limpio — cero CDN en index.html, src/, public/
-2. Se descubrió que EasyPanel servía un HTML antiguo de 840 líneas con React CDN + Tailwind CDN
-   — ese archivo NO existía en el repo, era una imagen Docker cacheada de una sesión anterior
-3. Se destruyó y recreó el servicio `harmony-lab` en EasyPanel desde cero
-4. Build Docker exitoso: `dist/index.html 1.06 kB`, `79.28 kB CSS`, `0 errores`
-5. Se actualizó el secret `EASYPANEL_WEBHOOK_URL` en GitHub Actions con el nuevo webhook:
-   `[URL en GitHub Secret: EASYPANEL_WEBHOOK_URL]`
-6. Se configuró el dominio en EasyPanel:
-   `https://clawdbot-harmony-lab.u555aa.easypanel.host → http://clawdbot_harmony-lab:4000/`
+El webhook de deploy fue rotado por el usuario antes de esta sesión (el valor expuesto
+en `AUDIT.md`/`DEV_TASKS.md`/`PLAN.md` — señalado en `AUDIT_REPORT.md` B-1 — ya no es válido).
+La URL vigente vive únicamente en el secret `EASYPANEL_WEBHOOK_URL` de GitHub Actions.
 
-### Problema actual
-El proxy de EasyPanel devuelve "Service is not reachable" a pesar de que:
-- El build termina con `### Success`
-- El contenedor corre (CPU 0.1%, Memoria 31.7 MB)
-- El puerto configurado es 4000 (correcto según Dockerfile y server.js)
+---
 
-### Posibles causas a investigar en la próxima sesión
-1. **Nombre del contenedor incorrecto** — EasyPanel puede usar `harmony-lab` sin prefijo
-   en su red Docker interna. Probar cambiar destino a `http://harmony-lab:4000/`
-2. **server.js falla al arrancar** — Verificar logs del contenedor en EasyPanel → 
-   harmony-lab → ícono de terminal (>_). Buscar: `Harmony Lab Pro corriendo en puerto 4000`
-3. **package.json `type: "module"`** — server.js usa `import` (ESM). Verificar que
-   `package.json` tenga `"type": "module"` para que Node lo ejecute correctamente
-4. **`npm ci --omit=dev` falla** — Si framer-motion u otras deps están en dependencies
-   (no devDependencies), el servidor de producción las necesita
+## Estado al cierre de sesión — 2026-07-01 · Post-auditoría
 
-### Comando de diagnóstico rápido
-En EasyPanel → harmony-lab → pestaña terminal (ícono >_):
-```bash
-node server.js
-```
-Si falla, el error indicará la causa exacta.
+Rama de trabajo: `audit/portfolio-readiness` (mergeada a `main`). Commits de la sesión:
+`a007eb1`, `c53a8d6`, `d39dba2`, `cec7cb4`, `f29147e`.
 
-### Webhook de deploy
-```
-[URL almacenada en GitHub Secret: EASYPANEL_WEBHOOK_URL]
-```
+### Etapa 1 — Bugs P0 del audit + sesión unificada
+- Fix B-6 (test flaky de SongAnalyzer) y B-2 (PatternLibrary → Sequencer desconectado,
+  `pattern` ahora vive en `MusicContext` igual que `progression`)
+- `Progressions.jsx` dejó de reinventar un scheduler con `setInterval` y usa el hook
+  `useProgressions` (ya existía construido y sin usar, respaldado por `ProgressionPlayer`)
+- Nuevo hook `useSessionTransport`: Play/Stop desde Sequencer o Progressions arranca/detiene
+  ambos motores juntos; los engines viven en refs de `MusicContext` (no locales al
+  componente) para seguir sonando al navegar a otro módulo
+- KeyExplorer gana botón "+ Agregar a progresión" (antes solo HarmonyMap lo tenía)
+- Persistencia de sesión en `localStorage` (rootNote, scaleName, bpm, progression, pattern)
+
+### Fix visual — KeyExplorer
+- El nodo central del Circle of Fifths usaba `motion.g` de Framer Motion con
+  `originX/originY: 0`, que renderiza mal dentro de SVG — el texto se escapaba del
+  círculo como una placa flotante recortada. Se reemplazó por un `<g>` estático;
+  por pedido del usuario ahora solo muestra la tónica (la sensación de la escala ya
+  se ve en el MoodBanner del panel derecho)
+- La tónica central ahora cambia de color según `SCALE_MOOD[scaleName].color`
+
+### Pattern Library real + Sequencer de 12 instrumentos + pasos variables
+- 242 patrones de batería reales (no inventados), extraídos y deduplicados **por
+  contenido real de grid** de "Pocket Operations" (Paul Wenzel) — 22 géneros reales.
+  Los otros 3 libros en `pattern_books/` (200/260 patrones, Famous Drum Beats) son
+  escaneos de imagen o prosa — decisión del usuario: no arriesgar transcripción manual
+  imprecisa, quedaron fuera. `pattern_books/` está en `.gitignore` (material de terceros
+  con copyright) — solo se commitea `drumPatternsData.js` (data numérica derivada)
+- Sequencer pasó de 8 a 12 instrumentos: se separó el tom único en 3 (hi/mid/lo) y se
+  agregaron rimshot, cowbell, cymbal (nuevos synths en `AudioEngine.js`), para que
+  patrones como "SON CLAVE" suenen completos en vez de perder instrumentos
+  - Bug encontrado de paso: `INSTRUMENTS` tenía `hn_o` pero el switch de reproducción
+    buscaba `hh_o` — el hi-hat abierto nunca sonaba. Se corrigió al renombrar instrumentos
+- Número de pasos ya no fijo en 16 — control numérico junto al BPM (1-64), redimensiona
+  preservando los hits existentes (`resizePattern()`)
+
+### Estado de tests y deploy
+- 627 tests pasando (18 suites), build limpio, verificado end-to-end en navegador real
+  (Playwright headless) en cada etapa antes de commitear
+- Deploy a producción confirmado funcionando (ver sección "Resuelto" arriba)
+
+### Pendiente real para portafolio 100% listo
+- SongAnalyzer: implementar detección real de BPM/tonalidad (sigue simulado)
+- Responsive (Tablet/Mobile), backgrounds animados, microinteracciones — fuera de
+  alcance de esta sesión, no iniciados
+- Limpieza menor listada en "Pendiente — actualizado 2026-07-01" arriba

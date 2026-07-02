@@ -5,6 +5,32 @@
 
 ---
 
+## 🔄 Actualización post-auditoría (2026-07-01)
+
+Resuelto desde esta auditoría (ver `CLAUDE.md` → "Estado al cierre de sesión — 2026-07-01"
+para el detalle completo):
+
+| Item | Estado |
+|---|---|
+| B-1 Webhook expuesto | ✅ Rotado por el usuario antes de esta sesión |
+| B-2 PatternLibrary ↔ Sequencer desconectados | ✅ Arreglado — `pattern` vive en `MusicContext` |
+| B-6 Test flaky de SongAnalyzer | ✅ Arreglado |
+| I-3 README desactualizado | ✅ Reescrito con estado real |
+| I-8 Estado de la URL de producción | ✅ Confirmado funcionando (HTTP 200, verificado por el usuario) |
+| N-1 `harmony-lab-pro.tar.gz` trackeado | ⚠️ El archivo existe localmente pero **no está trackeado** en git — el hallazgo original era impreciso |
+| N-5 `.env.example` ausente | ✅ Ya existía al momento de esta actualización |
+
+**Sigue pendiente:** B-3 (SongAnalyzer simulado), B-4 (backgrounds animados), B-5 (responsive
+tablet/mobile), I-1/I-2 (overflow de layout en HarmonyMap/KeyExplorer, sin re-verificar),
+I-4 (PropTypes), I-5 (test de Splash), I-6 (og-image.png), I-7 (ternario de DesktopLayout),
+N-2 (cobertura solo en `core/`), N-3, N-4, N-6.
+
+**Fuera del alcance original de este audit, agregado por pedido del usuario en la misma sesión:**
+Pattern Library con 242 patrones reales (no inventados) extraídos de un libro de patrones,
+Sequencer expandido de 8 a 12 instrumentos, número de pasos configurable (antes fijo en 16).
+
+---
+
 ## Resumen ejecutivo
 
 El proyecto tiene una base técnica muy sólida: 9 módulos UI existen y compilan, el layer de `core/` supera 99% de cobertura con 454 tests, el build produce 0 errores y el Dockerfile es correcto. Sin embargo, quedan **6 bloqueantes críticos** que harían que un visitante del portafolio vea funciones rotas o comportamientos engañosos. Los más urgentes son el webhook de deploy expuesto en git, la desconexión silenciosa entre PatternLibrary y Sequencer, el análisis de audio completamente simulado sin disclamer, y la ausencia total de los 4 backgrounds animados y de los layouts responsive. Con la corrección de los items 🔴 y 🟡, el proyecto estaría listo para portafolio público.
@@ -19,7 +45,7 @@ El proyecto tiene una base técnica muy sólida: 9 módulos UI existen y compila
 **Commits que lo contienen:** `1036aac`, `476540a`
 
 ```
-http://89.116.167.180:3000/api/deploy/8783735a2ab991b4b131b9a3570d34503eed3d11836f7669
+[URL rotada — almacenada solo en GitHub Secret EASYPANEL_WEBHOOK_URL]
 ```
 
 Cualquiera que clone el repo público puede disparar un deploy en producción. Adicionalmente, la IP del VPS (`89.116.167.180`) está en `CLAUDE.md` (commit `59e0b79`). El webhook está en el historial de git — borrarlo del working tree no basta.

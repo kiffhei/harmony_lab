@@ -1,5 +1,9 @@
 # PROMPT_KICKOFF.md — Harmony Lab Pro | Prompts de inicio para sesiones dedicadas
 > Generado: 2026-06-17 · Auditoría en AUDIT.md · Plan en PLAN.md
+> Actualizado: 2026-07-01 — KICKOFF A, B y C ya se ejecutaron (ver DEV_TASKS.md para estado
+> detallado de cada tarea). KICKOFF D (fix de layout + screenshots) sigue pendiente tal cual
+> está escrito. Se dejan los 4 kickoffs completos como referencia histórica de cómo se planeó
+> el trabajo, no como pendiente activo salvo D.
 
 ---
 
@@ -16,7 +20,7 @@ Esta sesión es de seguridad, configuración y documentación. No hay nueva func
 TAREAS (en orden):
 
 1. [DEV1] Eliminar webhook URL de EasyPanel de CLAUDE.md
-   - Buscar: "http://89.116.167.180:3000/api/deploy/8783..."
+   - Buscar la URL real del webhook expuesta en texto plano
    - Reemplazar con: "[URL almacenada en GitHub Secret: EASYPANEL_WEBHOOK_URL]"
    - Commit: "security: remove EasyPanel webhook URL from public doc"
 

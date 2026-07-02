@@ -1,56 +1,73 @@
 # Harmony Lab Pro
 
-App web musical interactiva para composición asistida, exploración 
-armónica y secuenciación rítmica. Portafolio técnico de Brian Eduardo 
+App web musical interactiva para composición asistida, exploración
+armónica y secuenciación rítmica. Portafolio técnico de Brian Eduardo
 Anaya Ruiz.
 
-**Producción:** https://clawdbot-harmony-lab.u555aa.easypanel.host  
-**Repo:** https://github.com/kiffhei/harmony_lab  
+**Producción:** https://clawdbot-harmony-lab.u555aa.easypanel.host
+**Repo:** https://github.com/kiffhei/harmony_lab
 **Rama principal:** main (siempre deployable)
 
 ---
 
 ## Stack
 
-React 18 · Vite 5 · Tailwind CSS v3 · Framer Motion · Web Audio API  
+React 18 · Vite 5 · Tailwind CSS v3 · Framer Motion · Web Audio API
 Vitest · React Testing Library · Node.js HTTP · Docker multistage · EasyPanel
 
 ---
 
-## Estado actual — Semana 2 en progreso
+## Estado actual — 9 módulos completos, desktop-first
 
-### ✅ Semana 1 — Completa
-- 7 módulos core con TDD: MusicTheory, AudioEngine, MidiExport,
-  HarmonyGraph, ProgressionEngine, SequencerEngine, TunerEngine
-- 450+ tests, cobertura >99%
-- MusicContext + 8 hooks
-- Design system completo: tokens.css, globals.css, 9 CSS de módulos
-- 4 backgrounds animados (componentes)
+### Armonía
+- **HarmonyMap** — 7 nodos diatónicos, aristas tipificadas, sugerencias de movimiento,
+  10 progresiones comunes, envía acordes a Progressions
+- **Key Explorer** — Circle of Fifths SVG, MoodBanner emocional (12 escalas incluyendo
+  Double Harmonic y Phrygian Dominant), tónica central con color dinámico por escala,
+  envía acordes a Progressions
+- **Progressions** — editor con reproducción real (`ProgressionPlayer`), loop, duración
+  variable por acorde, export MIDI/JSON
 
-### ✅ Semana 2 — En progreso
-**Completados:**
-- DesktopLayout — sidebar 64px, panel 260px, 4 tabs, navegación
-- Splash — 9 cards animadas, logo H·LAB, 12 tonality dots
-- KeyExplorer — Circle of Fifths SVG, MoodBanner emocional,
-  12 escalas incluyendo Double Harmonic y Phrygian Dominant
-- HarmonyMap — 7 nodos diatónicos, aristas tipificadas,
-  sugerencias de movimiento, 10 progresiones comunes
+### Instrumentos
+- **Piano** — 3 octavas, resalta escala/tónica activa
+- **Guitar** — 6 cuerdas × 12 trastes, resalta escala/tónica activa
 
-**Pendientes Semana 2:**
-- Piano, Guitar, Progressions
+### Ritmo
+- **Sequencer** — drum machine de **12 instrumentos** (kick, snare, hi-hat cerrado/abierto,
+  clap, 3 toms, shaker, rimshot, cowbell, cymbal) con **número de pasos configurable**
+  (no solo 16 — de 1 a 64, redimensiona preservando los hits existentes)
+- **Pattern Library** — **242 patrones de batería reales**, extraídos y deduplicados por
+  contenido real de grid (no por nombre) de un compendio de patrones de dominio educativo,
+  agrupados en 22 géneros (Rock, Electro, House, Hip Hop, Funk and Soul, Afro-Cuban,
+  Drum and Bass, EDM, Reggaeton, Breaks, Drum Rolls, etc.)
+- Sequencer y Progressions comparten **transporte de sesión**: dar Play en cualquiera de
+  los dos arranca ambos juntos, y el motor de audio sigue sonando aunque navegues a otro
+  módulo
 
-**Pendientes de revisión de diseño:**
-- KeyExplorer: layout height overflow en desktop
-- HarmonyMap: elipse aplastada en viewports wide
+### Herramientas
+- **Tuner** — afinador por micrófono, autocorrelación FFT, rango 50Hz–1200Hz
+- **Song Analyzer** — upload de audio con validación de formato/tamaño; el análisis de
+  BPM/tonalidad hoy es **simulado** (pendiente de detección real, ver abajo)
 
-### ⏳ Semana 3 — Rhythm Lab
-Sequencer · PatternLibrary
+### Estado global
+- Progresión, patrón de batería, tonalidad y BPM **persisten en localStorage** — sobreviven
+  a un refresco del navegador
+- MusicContext + 9 hooks (`useHarmonyMap`, `useProgressions`, `useSequencer`,
+  `useSessionTransport`, `useTuner`, `useAudioEngine`, `useMusicContext`, `useDevice`,
+  `useAnimatedBackground`)
 
-### ⏳ Semana 4 — Herramientas
-Tuner · SongAnalyzer · Backgrounds animados · Transiciones
+---
 
-### ⏳ Semana 5 — Layouts y deploy final
-TabletLayout · MobileLayout · CI/CD · Deploy producción
+## Pendiente
+
+- **Song Analyzer**: implementar detección real de BPM/tonalidad (hoy simulado con
+  valores aleatorios, sin engañar al usuario pero tampoco analiza el audio real)
+- **Responsive**: solo hay `DesktopLayout` — Tablet y Mobile quedaron fuera de alcance
+  a propósito por ahora
+- **Backgrounds animados y microinteracciones** (`ParticlesBeat`, `TonalityGradient`,
+  `FrequencyWave`, `GridPulse`) — especificados en `CLAUDE.md`, no implementados
+- Limpieza menor: PropTypes en algunos componentes, test de `Splash`, `og-image.png`,
+  cobertura de Vitest ampliada a `components/`
 
 ---
 
@@ -62,7 +79,7 @@ TabletLayout · MobileLayout · CI/CD · Deploy producción
 npm test
 ```
 
-489 tests passing · 9 suites · cobertura >99% en core/
+627 tests passing · 18 suites · cobertura >99% en core/
 
 ---
 
@@ -84,11 +101,9 @@ npm test          # suite completa
 - **CI/CD:** GitHub Actions → webhook EasyPanel en push a main
 - **Docker:** multistage node:20-alpine, puerto 4000
 
-> ⚠️ Deploy en revisión — ejecutar localmente con `npm run dev` mientras se restaura el servicio.
-
 ---
 
 ## Autor
 
-Brian Eduardo Anaya Ruiz — Consultor de automatización  
+Brian Eduardo Anaya Ruiz — Consultor de automatización
 Cuautitlán, Estado de México

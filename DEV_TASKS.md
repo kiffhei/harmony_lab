@@ -1,6 +1,6 @@
 # DEV_TASKS.md — Harmony Lab Pro | Tareas de código
 > Para sesión dedicada de Claude Code.
-> Fecha: 2026-06-17
+> Fecha: 2026-06-17 · Actualizado: 2026-07-01
 
 ---
 
@@ -9,11 +9,22 @@
 Harmony Lab Pro: app web musical interactiva. React 18 + Vite 5 + Web Audio API.
 Ruta local: `~/proyectos/harmony-lab/`
 Repo: https://github.com/kiffhei/harmony_lab
-Producción: https://clawdbot-harmony-lab.u555aa.easypanel.host (actualmente rota)
+Producción: https://clawdbot-harmony-lab.u555aa.easypanel.host (confirmado funcionando 2026-07-01)
 
 Leer CLAUDE.md antes de cualquier cambio.
 
-Estado actual: Semana 2/5 — 489 tests, 4 módulos implementados, deploy roto.
+**Estado actual (2026-07-01):** 9 módulos completos, 627 tests, deploy funcionando. Ver `README.md`
+y la sección "Estado al cierre de sesión — 2026-07-01" de `CLAUDE.md` para el detalle. Estado de
+cada tarea de abajo:
+
+| Tarea | Estado |
+|---|---|
+| DEV1 (quitar webhook de CLAUDE.md) | ✅ Hecho (y reforzado 2026-07-01: se encontró el mismo webhook expuesto también en AUDIT.md, PLAN.md, este archivo y PROMPT_KICKOFF.md — redactado en todos) |
+| DEV2 (config ESLint) | ⚠️ `.eslintrc.json` existe; el paso de lint **no** se agregó al workflow de CI |
+| DEV3 (badge CI en README) | ✅ Badge presente |
+| DEV4 (diagnosticar deploy) | ✅ Resuelto — no se identificó cuál causa candidata era la real |
+| DEV5 (sacar CLAUDE.md/DESIGNER.md del repo público) | ⏳ Sin decisión — siguen públicos |
+| DEV6 (Piano, Guitar, Progressions) | ✅ Hecho, más Sequencer/PatternLibrary/Tuner/SongAnalyzer (fuera del alcance original de este archivo) |
 
 ---
 
@@ -24,7 +35,7 @@ Estado actual: Semana 2/5 — 489 tests, 4 módulos implementados, deploy roto.
 
 Buscar y reemplazar la línea:
 ```
-http://89.116.167.180:3000/api/deploy/8783735a2ab991b4b131b9a3570d34503eed3d11836f7669
+[URL rotada — almacenada solo en GitHub Secret EASYPANEL_WEBHOOK_URL]
 ```
 Por:
 ```

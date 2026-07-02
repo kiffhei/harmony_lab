@@ -586,6 +586,63 @@ y sentirse profesional a nivel de producto comercial real.
 
 ---
 
+### Sesión 4 — 2026-07-01 (implementada directamente por el agente programador)
+
+Estos ajustes se hicieron durante una sesión de desarrollo (no una sesión de diseño dedicada),
+a partir de feedback visual directo del usuario sobre la app corriendo. Se documentan aquí
+para que el sistema de diseño quede consistente con lo que realmente está en producción.
+
+#### Fix: nodo central de KeyExplorer
+
+**Problema encontrado:** el nodo central del Circle of Fifths usaba `motion.g` de Framer Motion
+con `originX/originY: 0` para una animación de spring. Esa combinación renderiza mal dentro de
+SVG — el texto (tónica + nombre de escala truncado) se escapaba del círculo y aparecía como una
+placa rectangular recortada cerca del borde superior del canvas, en vez de quedarse centrado.
+
+**Solución implementada:**
+- Se reemplazó `motion.g` por un `<g>` SVG estático (sin animación de Framer Motion)
+- Por pedido explícito del usuario, el nodo central **ya no muestra el nombre de la escala**
+  (esa información ya vive en el `MoodBanner` de la columna derecha) — solo muestra la tónica
+- La tónica cambia de color dinámicamente según `SCALE_MOOD[scaleName].color` (fill al 15% de
+  opacidad vía sufijo hex `26`, stroke sólido, drop-shadow al 40% vía sufijo hex `66`)
+
+**Nota para futuras animaciones en SVG:** evitar `motion.g`/`motion.circle` de Framer Motion con
+`originX`/`originY` custom dentro de un `<svg>` — usar CSS transitions o animar solo props que
+Framer soporte de forma nativa en SVG (`opacity`, `pathLength`), o envolver el `<g>` en un
+`<foreignObject>` si se necesita spring real.
+
+#### Ampliación de paleta: Sequencer (8 → 12 instrumentos)
+
+El Sequencer pasó a soportar 3 toms (antes 1 solo "tom" genérico) más rimshot, cowbell y cymbal
+— necesarios para reproducir con fidelidad completa patrones reales de un libro de patrones de
+batería. Colores asignados en `src/styles/modules/sequencer.css`, reusando tonos ya definidos
+en `tokens.css` para no introducir una paleta nueva:
+
+| Instrumento | Color | Token reusado |
+|---|---|---|
+| Tom hi/mid/lo | Verde (`--c-green`, sin cambio respecto al "tom" genérico anterior) | `--glow-tom` |
+| Rimshot | Rojo | `--c-red` / `--glow-red` (ya existía en tokens, sin uso previo en Sequencer) |
+| Cowbell | Coral cálido | `--c-hot-coral` (de la paleta expresionista, sin uso previo en Sequencer) |
+| Cymbal | Índigo profundo | `--c-deep-indigo` (de la paleta expresionista, sin uso previo en Sequencer) |
+
+#### Pattern Library — 22 géneros reales (antes 5 inventados)
+
+Con 242 patrones reales agrupados en 22 géneros (ver `CLAUDE.md` para el detalle), escribir una
+franja de color (`stripe-*`) y un estado de filtro activo (`active-*`) por género uno por uno no
+era viable. Se optó por **reusar cíclicamente** las 8 variantes de `stripe-*` y 6 variantes de
+`active-*` que ya existían en `pattern-library.css` (incluían algunas nunca usadas: `stripe-reggae`,
+`stripe-jazz`, `stripe-latin`), asignadas por índice de género módulo el tamaño de cada paleta —
+en vez de diseñar 22 combinaciones nuevas. Si en una sesión de diseño futura se quiere una
+identidad de color única por género, esto es lo primero a reemplazar
+(`genreClass()` en `PatternLibrary.jsx`).
+
+#### Pendiente de diseño sin tocar esta sesión
+Los dos issues de layout de la sección anterior (KeyExplorer overflow en viewports bajos,
+HarmonyMap elipse aplastada en viewports anchos) **no se re-verificaron ni se tocaron** en
+esta sesión — siguen exactamente como se documentó en Sesión 1-3.
+
+---
+
 ## Reporte para orquestador — Sesiones 1-2-3 completas
 
 ### Estado de entrega: ✅ DISEÑO COMPLETO

@@ -30,7 +30,7 @@ curl http://localhost:4000/health
 ---
 
 ### C2 · Eliminar webhook URL de CLAUDE.md `[XS]`
-**Problema:** `http://89.116.167.180:3000/api/deploy/8783735a2ab991b4b131b9a3570d34503eed3d11836f7669` en texto plano en CLAUDE.md público. Cualquiera puede triggerear un deploy.
+**Problema:** `[URL rotada — almacenada solo en GitHub Secret EASYPANEL_WEBHOOK_URL]` en texto plano en CLAUDE.md público. Cualquiera puede triggerear un deploy.
 **Acción:**
 1. Reemplazar la URL específica por `[URL_EN_GITHUB_SECRETS]`
 2. O mover CLAUDE.md a `.gitignore` (ver C3)
