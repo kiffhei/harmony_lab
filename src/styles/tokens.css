@@ -353,7 +353,8 @@
      LAYOUT — estructuras de la app
      ═══════════════════════════════════════════════════════════════════════ */
 
-  --sidebar-w:    64px;
+  --sidebar-w:          64px;
+  --sidebar-w-expanded: 180px;
   --panel-w:      260px;
   --bottom-nav-h: 64px;
   --topbar-h:     52px;
