@@ -10,7 +10,7 @@ const MODULES = [
   { name: 'Sequencer',       icon: '⚡',  desc: 'Drum machine 16 pasos',   tab: 2 },
   { name: 'Pattern Library', icon: '📂', desc: 'Biblioteca de ritmos',     tab: 2 },
   { name: 'Tuner',           icon: '🎯', desc: 'Afinador por micrófono',  tab: 3 },
-  { name: 'Song Analyzer',   icon: '🔬', desc: 'Análisis de audio',        tab: 3 },
+  // Song Analyzer no se muestra a propósito — ver nota en DesktopLayout.jsx TABS.
 ];
 
 const TONES = [

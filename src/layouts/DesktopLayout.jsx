@@ -14,7 +14,10 @@ const TABS = [
   { label: 'Armonía',      icon: '♩',  modules: ['Key Explorer', 'Harmony Map', 'Progressions'] },
   { label: 'Instrumentos', icon: '🎹', modules: ['Piano', 'Guitar'] },
   { label: 'Ritmo',        icon: '🥁', modules: ['Sequencer', 'Pattern Library'] },
-  { label: 'Herramientas', icon: '🔧', modules: ['Tuner', 'Song Analyzer'] },
+  // Song Analyzer queda fuera de esta lista a propósito — sigue implementado y
+  // referenciado más abajo (import + rama del ternario), pero no se muestra en
+  // ninguna navegación mientras el análisis de audio siga siendo simulado.
+  { label: 'Herramientas', icon: '🔧', modules: ['Tuner'] },
 ];
 
 /**

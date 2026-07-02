@@ -46,8 +46,11 @@ Vitest · React Testing Library · Node.js HTTP · Docker multistage · EasyPane
 
 ### Herramientas
 - **Tuner** — afinador por micrófono, autocorrelación FFT, rango 50Hz–1200Hz
-- **Song Analyzer** — upload de audio con validación de formato/tamaño; el análisis de
-  BPM/tonalidad hoy es **simulado** (pendiente de detección real, ver abajo)
+- **Song Analyzer** — implementado y con tests, pero **oculto a propósito** de toda
+  navegación (Splash, panel de módulos): el análisis de BPM/tonalidad hoy es simulado, y
+  mostrar una herramienta que no analiza audio real le resta credibilidad al resto de la
+  suite. Vuelve a activarse en `src/layouts/DesktopLayout.jsx` (agregar `'Song Analyzer'`
+  a los módulos de Herramientas) el día que tenga detección real, ver "Pendiente" abajo
 
 ### Estado global
 - Progresión, patrón de batería, tonalidad y BPM **persisten en localStorage** — sobreviven
